@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Procedural Terrain Generation</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #0a0a12;
+        font-family: "Arial", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #d6d6d8;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 1200px;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .title {
+        margin-bottom: 5px;
+        font-size: 24px;
+        letter-spacing: 1px;
+        color: #e8e8ec;
+        text-align: center;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        opacity: 0.8;
+        margin-bottom: 20px;
+        text-align: center;
+        max-width: 800px;
+        line-height: 1.6;
+      }
+
+      #terrain-canvas {
+        width: 100%;
+        height: 70vh;
+        max-height: 800px;
+        background-color: #000;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+        max-width: 800px;
+      }
+
+      .slider-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+      }
+
+      .slider-container {
+        display: flex;
+        flex-direction: column;
+        min-width: 200px;
+        flex: 1;
+      }
+
+      label {
+        margin-bottom: 5px;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        margin-bottom: 5px;
+      }
+
+      .value-display {
+        font-size: 12px;
+        opacity: 0.7;
+        text-align: center;
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 5px;
+      }
+
+      button {
+        background-color: #2e363e;
+        color: #d6d6d8;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background-color: #3d4a57;
+      }
+
+      .biome-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .biome-selector {
+        padding: 6px 12px;
+        background-color: #2e363e;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 13px;
+      }
+
+      .biome-selector:hover {
+        background-color: #3d4a57;
+      }
+
+      .biome-selector.active {
+        background-color: #4c5c6d;
+      }
+
+      .view-toggle {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        justify-content: center;
+      }
+
+      .view-button {
+        padding: 6px 12px;
+        background-color: #2e363e;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 13px;
+      }
+
+      .view-button:hover {
+        background-color: #3d4a57;
+      }
+
+      .view-button.active {
+        background-color: #4c5c6d;
+      }
+
+      .loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 20px;
+        border-radius: 8px;
+        pointer-events: none;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .slider-row {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .slider-container {
+          min-width: unset;
+        }
+
+        .title {
+          font-size: 20px;
+        }
+
+        .subtitle {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="title">Procedural Terrain Generation</div>
+      <div class="subtitle">
+        Witness the emergence of landscape through algorithmic processes,
+        reflecting the same patterns that have shaped our own Earth over
+        geological time.
+      </div>
+
+      <div class="view-toggle">
+        <div class="view-button active" data-view="3d">3D Terrain</div>
+        <div class="view-button" data-view="2d">Height Map</div>
+        <div class="view-button" data-view="contour">Contour Map</div>
+      </div>
+
+      <div id="terrain-canvas"></div>
+      <div id="loading" class="loading hidden">Generating terrain...</div>
+
+      <div class="biome-container">
+        <div class="biome-selector active" data-biome="mountains">
+          Mountains
+        </div>
+        <div class="biome-selector" data-biome="islands">Islands</div>
+        <div class="biome-selector" data-biome="desert">Desert</div>
+        <div class="biome-selector" data-biome="hills">Rolling Hills</div>
+        <div class="biome-selector" data-biome="canyon">Canyon</div>
+      </div>
+
+      <div class="controls">
+        <div class="slider-row">
+          <div class="slider-container">
+            <label for="scale">Terrain Scale</label>
+            <input
+              type="range"
+              id="scale"
+              min="30"
+              max="200"
+              value="80"
+              step="10"
+            />
+            <div class="value-display" id="scale-value">80</div>
+          </div>
+          <div class="slider-container">
+            <label for="roughness">Roughness</label>
+            <input
+              type="range"
+              id="roughness"
+              min="0.1"
+              max="2"
+              value="0.6"
+              step="0.1"
+            />
+            <div class="value-display" id="roughness-value">0.6</div>
+          </div>
+          <div class="slider-container">
+            <label for="elevation">Elevation</label>
+            <input
+              type="range"
+              id="elevation"
+              min="20"
+              max="120"
+              value="60"
+              step="5"
+            />
+            <div class="value-display" id="elevation-value">60</div>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-container">
+            <label for="water-level">Water Level</label>
+            <input
+              type="range"
+              id="water-level"
+              min="0"
+              max="0.6"
+              value="0.25"
+              step="0.05"
+            />
+            <div class="value-display" id="water-level-value">0.25</div>
+          </div>
+          <div class="slider-container">
+            <label for="layers">Octave Layers</label>
+            <input
+              type="range"
+              id="layers"
+              min="1"
+              max="8"
+              value="5"
+              step="1"
+            />
+            <div class="value-display" id="layers-value">5</div>
+          </div>
+          <div class="slider-container">
+            <label for="resolution">Resolution</label>
+            <input
+              type="range"
+              id="resolution"
+              min="50"
+              max="200"
+              value="100"
+              step="10"
+            />
+            <div class="value-display" id="resolution-value">100 × 100</div>
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button id="generate-btn">Generate New Terrain</button>
+          <button id="export-btn">Export SVG</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.151.3/three.min.js"></script>
+    <script>
+      // Main state variables
+      let currentView = "3d";
+      let currentBiome = "mountains";
+      let noiseScale = 80;
+      let roughness = 0.6;
+      let elevation = 60;
+      let waterLevel = 0.25;
+      let octaves = 5;
+      let resolution = 100;
+      let isGenerating = false;
+
+      // Three.js variables
+      let scene, camera, renderer;
+      let terrain, water;
+      let heightData = [];
+
+      // DOM elements
+      const terrainCanvas = document.getElementById("terrain-canvas");
+      const generateBtn = document.getElementById("generate-btn");
+      const exportBtn = document.getElementById("export-btn");
+      const loadingIndicator = document.getElementById("loading");
+
+      // Initialize state from UI
+      function initializeState() {
+        noiseScale = parseInt(document.getElementById("scale").value);
+        roughness = parseFloat(document.getElementById("roughness").value);
+        elevation = parseInt(document.getElementById("elevation").value);
+        waterLevel = parseFloat(document.getElementById("water-level").value);
+        octaves = parseInt(document.getElementById("layers").value);
+        resolution = parseInt(document.getElementById("resolution").value);
+
+        document.getElementById("scale-value").textContent = noiseScale;
+        document.getElementById("roughness-value").textContent = roughness;
+        document.getElementById("elevation-value").textContent = elevation;
+        document.getElementById("water-level-value").textContent = waterLevel;
+        document.getElementById("layers-value").textContent = octaves;
+        document.getElementById(
+          "resolution-value"
+        ).textContent = `${resolution} × ${resolution}`;
+      }
+
+      // Set up event listeners
+      function setupEventListeners() {
+        generateBtn.addEventListener("click", generateTerrain);
+        exportBtn.addEventListener("click", exportTerrainSVG);
+
+        // View toggle
+        document.querySelectorAll(".view-button").forEach((button) => {
+          button.addEventListener("click", () => {
+            currentView = button.dataset.view;
+            document
+              .querySelectorAll(".view-button")
+              .forEach((b) => b.classList.remove("active"));
+            button.classList.add("active");
+            updateView();
+          });
+        });
+
+        // Biome selectors
+        document.querySelectorAll(".biome-selector").forEach((button) => {
+          button.addEventListener("click", () => {
+            currentBiome = button.dataset.biome;
+            document
+              .querySelectorAll(".biome-selector")
+              .forEach((b) => b.classList.remove("active"));
+            button.classList.add("active");
+            applyBiomeSettings();
+            generateTerrain();
+          });
+        });
+
+        // Sliders
+        document.getElementById("scale").addEventListener("input", (e) => {
+          noiseScale = parseInt(e.target.value);
+          document.getElementById("scale-value").textContent = noiseScale;
+        });
+
+        document.getElementById("roughness").addEventListener("input", (e) => {
+          roughness = parseFloat(e.target.value);
+          document.getElementById("roughness-value").textContent = roughness;
+        });
+
+        document.getElementById("elevation").addEventListener("input", (e) => {
+          elevation = parseInt(e.target.value);
+          document.getElementById("elevation-value").textContent = elevation;
+        });
+
+        document
+          .getElementById("water-level")
+          .addEventListener("input", (e) => {
+            waterLevel = parseFloat(e.target.value);
+            document.getElementById("water-level-value").textContent =
+              waterLevel;
+            if (water) {
+              water.position.y = -elevation / 2 + waterLevel * elevation;
+            }
+          });
+
+        document.getElementById("layers").addEventListener("input", (e) => {
+          octaves = parseInt(e.target.value);
+          document.getElementById("layers-value").textContent = octaves;
+        });
+
+        document.getElementById("resolution").addEventListener("input", (e) => {
+          resolution = parseInt(e.target.value);
+          document.getElementById(
+            "resolution-value"
+          ).textContent = `${resolution} × ${resolution}`;
+        });
+      }
+
+      // Apply biome-specific settings
+      function applyBiomeSettings() {
+        const biomeSettings = {
+          mountains: {
+            scale: 80,
+            roughness: 0.8,
+            elevation: 80,
+            waterLevel: 0.2,
+            octaves: 6,
+          },
+          islands: {
+            scale: 120,
+            roughness: 0.6,
+            elevation: 50,
+            waterLevel: 0.4,
+            octaves: 5,
+          },
+          desert: {
+            scale: 100,
+            roughness: 0.3,
+            elevation: 40,
+            waterLevel: 0.1,
+            octaves: 4,
+          },
+          hills: {
+            scale: 150,
+            roughness: 0.4,
+            elevation: 30,
+            waterLevel: 0.15,
+            octaves: 3,
+          },
+          canyon: {
+            scale: 60,
+            roughness: 1.2,
+            elevation: 70,
+            waterLevel: 0.1,
+            octaves: 5,
+          },
+        };
+
+        const settings = biomeSettings[currentBiome];
+
+        document.getElementById("scale").value = settings.scale;
+        document.getElementById("roughness").value = settings.roughness;
+        document.getElementById("elevation").value = settings.elevation;
+        document.getElementById("water-level").value = settings.waterLevel;
+        document.getElementById("layers").value = settings.octaves;
+
+        noiseScale = settings.scale;
+        roughness = settings.roughness;
+        elevation = settings.elevation;
+        waterLevel = settings.waterLevel;
+        octaves = settings.octaves;
+
+        document.getElementById("scale-value").textContent = noiseScale;
+        document.getElementById("roughness-value").textContent = roughness;
+        document.getElementById("elevation-value").textContent = elevation;
+        document.getElementById("water-level-value").textContent = waterLevel;
+        document.getElementById("layers-value").textContent = octaves;
+      }
+
+      // Initialize Three.js
+      function initThree() {
+        // Scene setup
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x111122);
+
+        // Camera setup
+        const width = terrainCanvas.clientWidth;
+        const height = terrainCanvas.clientHeight;
+        const aspectRatio = width / height;
+        camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 1000);
+        camera.position.set(0, 40, 120);
+        camera.lookAt(0, 0, 0);
+
+        // Renderer setup
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(width, height);
+        renderer.shadowMap.enabled = true;
+        terrainCanvas.appendChild(renderer.domElement);
+
+        // Add lights
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(100, 100, 50);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        directionalLight.shadow.camera.near = 0.5;
+        directionalLight.shadow.camera.far = 500;
+        scene.add(directionalLight);
+
+        // Handle window resize
+        window.addEventListener("resize", () => {
+          const newWidth = terrainCanvas.clientWidth;
+          const newHeight = terrainCanvas.clientHeight;
+
+          camera.aspect = newWidth / newHeight;
+          camera.updateProjectionMatrix();
+
+          renderer.setSize(newWidth, newHeight);
+        });
+
+        // Add orbit controls
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let rotationSpeed = 0.005;
+
+        terrainCanvas.addEventListener("mousedown", (e) => {
+          isDragging = true;
+          previousMousePosition = {
+            x: e.clientX,
+            y: e.clientY,
+          };
+        });
+
+        document.addEventListener("mouseup", () => {
+          isDragging = false;
+        });
+
+        document.addEventListener("mousemove", (e) => {
+          if (!isDragging) return;
+
+          const deltaMove = {
+            x: e.clientX - previousMousePosition.x,
+            y: e.clientY - previousMousePosition.y,
+          };
+
+          if (scene && camera) {
+            // Rotate camera around target
+            const target = new THREE.Vector3(0, 0, 0);
+            const cameraPosition = new THREE.Vector3().copy(camera.position);
+
+            // Calculate angles
+            const radius = cameraPosition.distanceTo(target);
+            let theta = Math.atan2(camera.position.x, camera.position.z);
+            let phi = Math.acos(camera.position.y / radius);
+
+            // Apply rotation
+            theta -= deltaMove.x * rotationSpeed;
+            phi = Math.max(
+              0.1,
+              Math.min(Math.PI / 2 - 0.1, phi + deltaMove.y * rotationSpeed)
+            );
+
+            // Update camera position
+            camera.position.x = radius * Math.sin(phi) * Math.sin(theta);
+            camera.position.z = radius * Math.sin(phi) * Math.cos(theta);
+            camera.position.y = radius * Math.cos(phi);
+
+            camera.lookAt(target);
+          }
+
+          previousMousePosition = {
+            x: e.clientX,
+            y: e.clientY,
+          };
+        });
+
+        // Add zoom with mouse wheel
+        terrainCanvas.addEventListener("wheel", (e) => {
+          e.preventDefault();
+
+          const zoomSpeed = 0.1;
+          const target = new THREE.Vector3(0, 0, 0);
+          const cameraPosition = new THREE.Vector3().copy(camera.position);
+          const direction = new THREE.Vector3()
+            .subVectors(target, cameraPosition)
+            .normalize();
+
+          // Calculate new distance
+          const distance = cameraPosition.distanceTo(target);
+          let newDistance = distance;
+
+          if (e.deltaY > 0) {
+            // Zoom out
+            newDistance = Math.min(220, distance * (1 + zoomSpeed));
+          } else {
+            // Zoom in
+            newDistance = Math.max(30, distance * (1 - zoomSpeed));
+          }
+
+          // Update camera position
+          camera.position
+            .copy(target)
+            .sub(direction.multiplyScalar(newDistance));
+          camera.lookAt(target);
+        });
+
+        // Add basic animation
+        function animate() {
+          requestAnimationFrame(animate);
+          renderer.render(scene, camera);
+        }
+
+        animate();
+      }
+
+      // Create 3D terrain mesh
+      function createTerrainMesh(heightData) {
+        // Remove existing terrain and water if they exist
+        if (terrain) scene.remove(terrain);
+        if (water) scene.remove(water);
+
+        // Create terrain geometry
+        const geometry = new THREE.PlaneGeometry(
+          100,
+          100,
+          resolution - 1,
+          resolution - 1
+        );
+
+        // Apply height data to vertices
+        const vertices = geometry.attributes.position.array;
+        for (let i = 0; i < vertices.length; i += 3) {
+          const x = Math.floor((i / 3) % resolution);
+          const y = Math.floor(i / 3 / resolution);
+
+          if (x < resolution && y < resolution) {
+            vertices[i + 2] = heightData[y][x] * elevation - elevation / 2;
+          }
+        }
+
+        geometry.computeVertexNormals();
+
+        // Create color map based on biome
+        const colorMaps = {
+          mountains: [
+            { height: 0.1, color: new THREE.Color(0x2d4430) }, // Deep forest
+            { height: 0.3, color: new THREE.Color(0x5a7752) }, // Forest
+            { height: 0.5, color: new THREE.Color(0x8b7e55) }, // Rocky terrain
+            { height: 0.7, color: new THREE.Color(0xbbb8a5) }, // Lighter rock
+            { height: 0.85, color: new THREE.Color(0xe6e6e6) }, // Snow
+            { height: 1.0, color: new THREE.Color(0xffffff) }, // Peak snow
+          ],
+          islands: [
+            { height: 0.2, color: new THREE.Color(0xf0da95) }, // Beach
+            { height: 0.4, color: new THREE.Color(0x98c849) }, // Low vegetation
+            { height: 0.7, color: new THREE.Color(0x529e3d) }, // Dense vegetation
+            { height: 0.9, color: new THREE.Color(0x207a2d) }, // Jungle
+            { height: 1.0, color: new THREE.Color(0x2a623b) }, // Dense jungle
+          ],
+          desert: [
+            { height: 0.2, color: new THREE.Color(0xe6c17a) }, // Light sand
+            { height: 0.4, color: new THREE.Color(0xd9b166) }, // Sand
+            { height: 0.6, color: new THREE.Color(0xc19e56) }, // Rocky sand
+            { height: 0.8, color: new THREE.Color(0xa3834d) }, // Desert rock
+            { height: 1.0, color: new THREE.Color(0x7a6338) }, // Rocky outcrops
+          ],
+          hills: [
+            { height: 0.2, color: new THREE.Color(0x91b247) }, // Meadow
+            { height: 0.4, color: new THREE.Color(0x7eac3f) }, // Grassland
+            { height: 0.6, color: new THREE.Color(0x618035) }, // Hills
+            { height: 0.8, color: new THREE.Color(0x556b2f) }, // Forest
+            { height: 1.0, color: new THREE.Color(0x3d5229) }, // Dense forest
+          ],
+          canyon: [
+            { height: 0.2, color: new THREE.Color(0xa56b39) }, // Canyon floor
+            { height: 0.4, color: new THREE.Color(0xb9783a) }, // Low rock
+            { height: 0.6, color: new THREE.Color(0xd58947) }, // Middle rock
+            { height: 0.8, color: new THREE.Color(0xe6a66c) }, // Upper rock
+            { height: 1.0, color: new THREE.Color(0xf0be94) }, // Top rock
+          ],
+        };
+
+        const colorMap = colorMaps[currentBiome];
+
+        // Create material
+        const material = new THREE.MeshPhongMaterial({
+          vertexColors: true,
+          flatShading: true,
+        });
+
+        // Apply vertex colors
+        const colors = [];
+        const normalizedHeights = [];
+
+        // First calculate min/max heights for normalization
+        let minHeight = Infinity;
+        let maxHeight = -Infinity;
+
+        for (let y = 0; y < resolution; y++) {
+          for (let x = 0; x < resolution; x++) {
+            const height = heightData[y][x];
+            minHeight = Math.min(minHeight, height);
+            maxHeight = Math.max(maxHeight, height);
+          }
+        }
+
+        // Then normalize and map to colors
+        for (let y = 0; y < resolution; y++) {
+          for (let x = 0; x < resolution; x++) {
+            const height = heightData[y][x];
+            const normalizedHeight =
+              (height - minHeight) / (maxHeight - minHeight);
+            normalizedHeights.push(normalizedHeight);
+          }
+        }
+
+        // Apply colors to vertices
+        for (let i = 0; i < vertices.length / 3; i++) {
+          const normalizedHeight = normalizedHeights[i];
+
+          // Find colors to interpolate between
+          let startColor, endColor, t;
+
+          for (let j = 0; j < colorMap.length - 1; j++) {
+            if (normalizedHeight <= colorMap[j + 1].height) {
+              startColor = colorMap[j].color;
+              endColor = colorMap[j + 1].color;
+              t =
+                (normalizedHeight - colorMap[j].height) /
+                (colorMap[j + 1].height - colorMap[j].height);
+              break;
+            }
+          }
+
+          if (!startColor) {
+            startColor = colorMap[colorMap.length - 2].color;
+            endColor = colorMap[colorMap.length - 1].color;
+            t = 1;
+          }
+
+          // Interpolate color
+          const color = new THREE.Color().copy(startColor).lerp(endColor, t);
+          colors.push(color.r, color.g, color.b);
+        }
+
+        // Add colors to geometry
+        geometry.setAttribute(
+          "color",
+          new THREE.Float32BufferAttribute(colors, 3)
+        );
+
+        // Create and add terrain mesh
+        terrain = new THREE.Mesh(geometry, material);
+        terrain.rotation.x = -Math.PI / 2;
+        terrain.receiveShadow = true;
+        terrain.castShadow = true;
+        scene.add(terrain);
+
+        // Add water plane
+        const waterGeometry = new THREE.PlaneGeometry(200, 200);
+        const waterMaterial = new THREE.MeshPhongMaterial({
+          color: getWaterColor(),
+          transparent: true,
+          opacity: 0.7,
+          specular: 0x111111,
+          shininess: 30,
+        });
+
+        water = new THREE.Mesh(waterGeometry, waterMaterial);
+        water.rotation.x = -Math.PI / 2;
+        water.position.y = -elevation / 2 + waterLevel * elevation;
+        water.receiveShadow = false;
+        scene.add(water);
+      }
+
+      // Get appropriate water color for the biome
+      function getWaterColor() {
+        const waterColors = {
+          mountains: 0x2d6a9e,
+          islands: 0x1a97c9,
+          desert: 0x39babd,
+          hills: 0x68a0b8,
+          canyon: 0x7097b2,
+        };
+
+        return waterColors[currentBiome];
+      }
+
+      // Generate noise using improved Perlin noise
+      function generateNoise(nx, ny, frequency, amplitude) {
+        // Simple smoothstep for interpolation
+        function smoothstep(t) {
+          return t * t * (3 - 2 * t);
+        }
+
+        // 2D dot product
+        function dot2(ix, iy, x, y) {
+          // Convert ix and iy into a hash for pseudo-random gradient selection
+          const hash = (ix * 3571 + iy * 67867967) % 2048;
+          const index = hash & 7;
+
+          // Unit vectors evenly distributed on a circle
+          const gradients = [
+            [1, 0],
+            [0.7071, 0.7071],
+            [0, 1],
+            [-0.7071, 0.7071],
+            [-1, 0],
+            [-0.7071, -0.7071],
+            [0, -1],
+            [0.7071, -0.7071],
+          ];
+
+          const gx = gradients[index][0];
+          const gy = gradients[index][1];
+
+          // Return dot product of gradient and distance vector
+          return gx * x + gy * y;
+        }
+
+        const ix = Math.floor(nx);
+        const iy = Math.floor(ny);
+
+        const fx = nx - ix;
+        const fy = ny - iy;
+
+        // Get gradients at corners
+        const g00 = dot2(ix, iy, fx, fy);
+        const g10 = dot2(ix + 1, iy, fx - 1, fy);
+        const g01 = dot2(ix, iy + 1, fx, fy - 1);
+        const g11 = dot2(ix + 1, iy + 1, fx - 1, fy - 1);
+
+        // Compute weights using smoothstep for interpolation
+        const wx = smoothstep(fx);
+        const wy = smoothstep(fy);
+
+        // Bilinear interpolation for final noise value
+        const a = g00 + wx * (g10 - g00);
+        const b = g01 + wx * (g11 - g01);
+        const result = a + wy * (b - a);
+
+        // Scale to [-1, 1]
+        return result * 0.5 + 0.5;
+      }
+
+      // Generate fractal Brownian motion (fBm) noise
+      function generateFBM(x, y, octaves, lacunarity, persistence) {
+        let amplitude = 1.0;
+        let frequency = 1.0;
+        let total = 0;
+        let maxValue = 0;
+
+        for (let i = 0; i < octaves; i++) {
+          const noise = generateNoise(
+            (x * frequency) / noiseScale,
+            (y * frequency) / noiseScale,
+            frequency,
+            amplitude
+          );
+          total += noise * amplitude;
+          maxValue += amplitude;
+          amplitude *= persistence;
+          frequency *= lacunarity;
+        }
+
+        // Normalize the result
+        return total / maxValue;
+      }
+
+      // Generate height map
+      function generateHeightMap() {
+        const grid = [];
+
+        // Apply biome-specific adjustments to the FBM parameters
+        let persistence, lacunarity;
+
+        switch (currentBiome) {
+          case "mountains":
+            persistence = 0.5;
+            lacunarity = 2.0;
+            break;
+          case "islands":
+            persistence = 0.45;
+            lacunarity = 2.2;
+            break;
+          case "desert":
+            persistence = 0.35;
+            lacunarity = 3.0;
+            break;
+          case "hills":
+            persistence = 0.4;
+            lacunarity = 2.5;
+            break;
+          case "canyon":
+            persistence = 0.6;
+            lacunarity = 2.0;
+            break;
+          default:
+            persistence = 0.5;
+            lacunarity = 2.0;
+        }
+
+        // Add a random offset for variety
+        const offsetX = Math.random() * 1000;
+        const offsetY = Math.random() * 1000;
+
+        // Create height map
+        for (let y = 0; y < resolution; y++) {
+          const row = [];
+          for (let x = 0; x < resolution; x++) {
+            let height = generateFBM(
+              x + offsetX,
+              y + offsetY,
+              octaves,
+              lacunarity,
+              persistence
+            );
+
+            // Apply domain warping for more natural terrain
+            if (currentBiome === "mountains" || currentBiome === "canyon") {
+              const warp =
+                generateFBM(
+                  x * 0.7 + offsetX + 500,
+                  y * 0.7 + offsetY + 500,
+                  Math.min(octaves, 3),
+                  lacunarity,
+                  persistence
+                ) * 10;
+
+              height = generateFBM(
+                x + offsetX + warp,
+                y + offsetY + warp,
+                octaves,
+                lacunarity,
+                persistence
+              );
+            }
+
+            // Apply biome-specific height modifications
+            switch (currentBiome) {
+              case "mountains":
+                // Make peaks higher
+                height = Math.pow(height, 1.2);
+                break;
+              case "islands":
+                // Create island effect with falloff from center
+                const dx = x / resolution - 0.5;
+                const dy = y / resolution - 0.5;
+                const distFromCenter = Math.sqrt(dx * dx + dy * dy) * 2.2;
+                const falloff = Math.max(0, 1 - distFromCenter);
+                height = height * falloff;
+                break;
+              case "desert":
+                // Flatter with occasional dunes
+                height = height * 0.7 + Math.pow(height, 3) * 0.3;
+                break;
+              case "hills":
+                // Smooth, rolling terrain
+                height = height * 0.6 + 0.2;
+                break;
+              case "canyon":
+                // Create canyon ridges and valleys
+                height = Math.abs(height - 0.5) * 1.6;
+
+                // Add erosion patterns
+                const smallDetail =
+                  generateFBM(
+                    x * 3 + offsetX + 300,
+                    y * 3 + offsetY + 300,
+                    2,
+                    lacunarity,
+                    persistence * 0.8
+                  ) * 0.1;
+
+                height += smallDetail;
+                height = Math.pow(height, 1.3);
+                break;
+            }
+
+            // Apply roughness factor
+            height = Math.pow(height, roughness);
+
+            row.push(height);
+          }
+          grid.push(row);
+        }
+
+        // Apply additional erosion pass
+        const erosionPasses = currentBiome === "canyon" ? 3 : 1;
+        let erodedGrid = [...grid.map((row) => [...row])];
+
+        for (let pass = 0; pass < erosionPasses; pass++) {
+          const tempGrid = [...erodedGrid.map((row) => [...row])];
+
+          for (let y = 1; y < resolution - 1; y++) {
+            for (let x = 1; x < resolution - 1; x++) {
+              const currentHeight = erodedGrid[y][x];
+              let lowestNeighbor = currentHeight;
+              let lowestX = x;
+              let lowestY = y;
+
+              // Find the lowest neighboring cell
+              for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                  if (dx === 0 && dy === 0) continue;
+
+                  const nx = x + dx;
+                  const ny = y + dy;
+
+                  if (
+                    nx >= 0 &&
+                    nx < resolution &&
+                    ny >= 0 &&
+                    ny < resolution
+                  ) {
+                    const neighborHeight = erodedGrid[ny][nx];
+                    if (neighborHeight < lowestNeighbor) {
+                      lowestNeighbor = neighborHeight;
+                      lowestX = nx;
+                      lowestY = ny;
+                    }
+                  }
+                }
+              }
+
+              // Apply erosion if this cell is higher than its lowest neighbor
+              if (currentHeight > lowestNeighbor) {
+                const erosionRate = 0.05;
+                const heightDiff = currentHeight - lowestNeighbor;
+                const erosionAmount = heightDiff * erosionRate;
+
+                tempGrid[y][x] -= erosionAmount;
+                tempGrid[lowestY][lowestX] += erosionAmount * 0.8; // Some material is lost
+              }
+            }
+          }
+
+          erodedGrid = tempGrid;
+        }
+
+        heightData = erodedGrid;
+        return erodedGrid;
+      }
+
+      // Create a height map visualization
+      function createHeightMapVisualization() {
+        if (!terrain) return;
+
+        // Clear existing terrain and water
+        if (terrain) scene.remove(terrain);
+        if (water) scene.remove(water);
+
+        // Create a plane for the height map
+        const geometry = new THREE.PlaneGeometry(100, 100, 1, 1);
+        const canvas = document.createElement("canvas");
+        canvas.width = resolution;
+        canvas.height = resolution;
+        const ctx = canvas.getContext("2d");
+
+        // Find min and max heights for normalization
+        let minHeight = Infinity;
+        let maxHeight = -Infinity;
+
+        for (let y = 0; y < resolution; y++) {
+          for (let x = 0; x < resolution; x++) {
+            const height = heightData[y][x];
+            minHeight = Math.min(minHeight, height);
+            maxHeight = Math.max(maxHeight, height);
+          }
+        }
+
+        // Draw the height map
+        for (let y = 0; y < resolution; y++) {
+          for (let x = 0; x < resolution; x++) {
+            const height = heightData[y][x];
+            const normalizedHeight =
+              (height - minHeight) / (maxHeight - minHeight);
+
+            // Draw water
+            if (normalizedHeight < waterLevel) {
+              const waterDepth = 1 - normalizedHeight / waterLevel;
+              const waterColor = getWaterColor();
+
+              // Convert hex color to RGB
+              const r = (waterColor >> 16) & 255;
+              const g = (waterColor >> 8) & 255;
+              const b = waterColor & 255;
+
+              // Darken based on depth
+              const depthFactor = 1 - waterDepth * 0.5;
+              ctx.fillStyle = `rgb(${r * depthFactor}, ${g * depthFactor}, ${
+                b * depthFactor
+              })`;
+            } else {
+              // Land colors based on height and biome
+              const colorMaps = {
+                mountains: [
+                  { height: 0.1, color: [45, 68, 48] }, // Deep forest
+                  { height: 0.3, color: [90, 119, 82] }, // Forest
+                  { height: 0.5, color: [139, 126, 85] }, // Rocky terrain
+                  { height: 0.7, color: [187, 184, 165] }, // Lighter rock
+                  { height: 0.85, color: [230, 230, 230] }, // Snow
+                  { height: 1.0, color: [255, 255, 255] }, // Peak snow
+                ],
+                islands: [
+                  { height: 0.2, color: [240, 218, 149] }, // Beach
+                  { height: 0.4, color: [152, 200, 73] }, // Low vegetation
+                  { height: 0.7, color: [82, 158, 61] }, // Dense vegetation
+                  { height: 0.9, color: [32, 122, 45] }, // Jungle
+                  { height: 1.0, color: [42, 98, 59] }, // Dense jungle
+                ],
+                desert: [
+                  { height: 0.2, color: [230, 193, 122] }, // Light sand
+                  { height: 0.4, color: [217, 177, 102] }, // Sand
+                  { height: 0.6, color: [193, 158, 86] }, // Rocky sand
+                  { height: 0.8, color: [163, 131, 77] }, // Desert rock
+                  { height: 1.0, color: [122, 99, 56] }, // Rocky outcrops
+                ],
+                hills: [
+                  { height: 0.2, color: [145, 178, 71] }, // Meadow
+                  { height: 0.4, color: [126, 172, 63] }, // Grassland
+                  { height: 0.6, color: [97, 128, 53] }, // Hills
+                  { height: 0.8, color: [85, 107, 47] }, // Forest
+                  { height: 1.0, color: [61, 82, 41] }, // Dense forest
+                ],
+                canyon: [
+                  { height: 0.2, color: [165, 107, 57] }, // Canyon floor
+                  { height: 0.4, color: [185, 120, 58] }, // Low rock
+                  { height: 0.6, color: [213, 137, 71] }, // Middle rock
+                  { height: 0.8, color: [230, 166, 108] }, // Upper rock
+                  { height: 1.0, color: [240, 190, 148] }, // Top rock
+                ],
+              };
+
+              const colorMap = colorMaps[currentBiome];
+
+              // Find colors to interpolate between
+              let startColor, endColor, t;
+              const landHeight =
+                (normalizedHeight - waterLevel) / (1 - waterLevel);
+
+              for (let i = 0; i < colorMap.length - 1; i++) {
+                if (landHeight <= colorMap[i + 1].height) {
+                  startColor = colorMap[i].color;
+                  endColor = colorMap[i + 1].color;
+                  t =
+                    (landHeight - colorMap[i].height) /
+                    (colorMap[i + 1].height - colorMap[i].height);
+                  break;
+                }
+              }
+
+              if (!startColor) {
+                startColor = colorMap[colorMap.length - 2].color;
+                endColor = colorMap[colorMap.length - 1].color;
+                t = 1;
+              }
+
+              // Interpolate color
+              const r = Math.floor(
+                startColor[0] + t * (endColor[0] - startColor[0])
+              );
+              const g = Math.floor(
+                startColor[1] + t * (endColor[1] - startColor[1])
+              );
+              const b = Math.floor(
+                startColor[2] + t * (endColor[2] - startColor[2])
+              );
+
+              ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+            }
+
+            ctx.fillRect(x, y, 1, 1);
+          }
+        }
+
+        // Create texture from canvas
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.minFilter = THREE.LinearFilter;
+
+        // Create material with the texture
+        const material = new THREE.MeshBasicMaterial({
+          map: texture,
+          side: THREE.DoubleSide,
+        });
+
+        // Create and add the plane
+        terrain = new THREE.Mesh(geometry, material);
+        terrain.rotation.x = -Math.PI / 2;
+        scene.add(terrain);
+
+        // Adjust camera position for 2D view
+        camera.position.set(0, 80, 0.1);
+        camera.lookAt(0, 0, 0);
+      }
+
+      // Create contour map visualization
+      function createContourMapVisualization() {
+        if (!terrain) return;
+
+        // Clear existing terrain and water
+        if (terrain) scene.remove(terrain);
+        if (water) scene.remove(water);
+
+        // Create a plane for the contour map
+        const geometry = new THREE.PlaneGeometry(100, 100, 1, 1);
+        const canvas = document.createElement("canvas");
+        canvas.width = resolution;
+        canvas.height = resolution;
+        const ctx = canvas.getContext("2d");
+
+        // Fill background
+        ctx.fillStyle = "#f5f5f5";
+        ctx.fillRect(0, 0, resolution, resolution);
+
+        // Find min and max heights for normalization
+        let minHeight = Infinity;
+        let maxHeight = -Infinity;
+
+        for (let y = 0; y < resolution; y++) {
+          for (let x = 0; x < resolution; x++) {
+            const height = heightData[y][x];
+            minHeight = Math.min(minHeight, height);
+            maxHeight = Math.max(maxHeight, height);
+          }
+        }
+
+        // Number of contour lines
+        const contourCount = 20;
+        const contourStep = 1 / contourCount;
+
+        // Draw contour lines
+        for (let c = 0; c <= contourCount; c++) {
+          const contourValue = c * contourStep;
+
+          ctx.beginPath();
+
+          // Find all cells that cross this contour value
+          for (let y = 0; y < resolution - 1; y++) {
+            for (let x = 0; x < resolution - 1; x++) {
+              const h00 =
+                (heightData[y][x] - minHeight) / (maxHeight - minHeight);
+              const h10 =
+                (heightData[y][x + 1] - minHeight) / (maxHeight - minHeight);
+              const h01 =
+                (heightData[y + 1][x] - minHeight) / (maxHeight - minHeight);
+              const h11 =
+                (heightData[y + 1][x + 1] - minHeight) /
+                (maxHeight - minHeight);
+
+              // Check if this cell crosses the contour line
+              const crossesContour =
+                (h00 < contourValue &&
+                  (h10 >= contourValue ||
+                    h01 >= contourValue ||
+                    h11 >= contourValue)) ||
+                (h10 < contourValue &&
+                  (h00 >= contourValue ||
+                    h01 >= contourValue ||
+                    h11 >= contourValue)) ||
+                (h01 < contourValue &&
+                  (h00 >= contourValue ||
+                    h10 >= contourValue ||
+                    h11 >= contourValue)) ||
+                (h11 < contourValue &&
+                  (h00 >= contourValue ||
+                    h10 >= contourValue ||
+                    h01 >= contourValue));
+
+              if (crossesContour) {
+                // Simplified approach - just mark the cell
+                ctx.rect(x, y, 1, 1);
+              }
+            }
+          }
+
+          // Determine contour color and thickness
+          let lineWidth = 0.5;
+          let alpha = 0.3;
+
+          // Make every 5th line thicker
+          if (c % 5 === 0) {
+            lineWidth = 1.0;
+            alpha = 0.7;
+          }
+
+          // Water contours in blue, land in brown
+          const contourColor =
+            contourValue < waterLevel
+              ? `rgba(0, 50, 150, ${alpha})`
+              : `rgba(100, 70, 50, ${alpha})`;
+
+          ctx.strokeStyle = contourColor;
+          ctx.lineWidth = lineWidth;
+          ctx.stroke();
+        }
+
+        // Draw water boundary
+        ctx.beginPath();
+
+        for (let y = 0; y < resolution - 1; y++) {
+          for (let x = 0; x < resolution - 1; x++) {
+            const h00 =
+              (heightData[y][x] - minHeight) / (maxHeight - minHeight);
+            const h10 =
+              (heightData[y][x + 1] - minHeight) / (maxHeight - minHeight);
+            const h01 =
+              (heightData[y + 1][x] - minHeight) / (maxHeight - minHeight);
+            const h11 =
+              (heightData[y + 1][x + 1] - minHeight) / (maxHeight - minHeight);
+
+            // Check if this cell crosses the water line
+            const crossesWater =
+              (h00 < waterLevel &&
+                (h10 >= waterLevel ||
+                  h01 >= waterLevel ||
+                  h11 >= waterLevel)) ||
+              (h10 < waterLevel &&
+                (h00 >= waterLevel ||
+                  h01 >= waterLevel ||
+                  h11 >= waterLevel)) ||
+              (h01 < waterLevel &&
+                (h00 >= waterLevel ||
+                  h10 >= waterLevel ||
+                  h11 >= waterLevel)) ||
+              (h11 < waterLevel &&
+                (h00 >= waterLevel || h10 >= waterLevel || h01 >= waterLevel));
+
+            if (crossesWater) {
+              ctx.rect(x, y, 1, 1);
+            }
+          }
+        }
+
+        ctx.strokeStyle = "rgba(0, 100, 200, 0.9)";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Fill water areas with light blue
+        for (let y = 0; y < resolution; y++) {
+          for (let x = 0; x < resolution; x++) {
+            const normalizedHeight =
+              (heightData[y][x] - minHeight) / (maxHeight - minHeight);
+
+            if (normalizedHeight < waterLevel) {
+              ctx.fillStyle = "rgba(100, 180, 255, 0.2)";
+              ctx.fillRect(x, y, 1, 1);
+            }
+          }
+        }
+
+        // Create texture from canvas
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.minFilter = THREE.LinearFilter;
+
+        // Create material with the texture
+        const material = new THREE.MeshBasicMaterial({
+          map: texture,
+          side: THREE.DoubleSide,
+        });
+
+        // Create and add the plane
+        terrain = new THREE.Mesh(geometry, material);
+        terrain.rotation.x = -Math.PI / 2;
+        scene.add(terrain);
+
+        // Adjust camera position for 2D view
+        camera.position.set(0, 80, 0.1);
+        camera.lookAt(0, 0, 0);
+      }
+
+      // Main terrain generation function
+      function generateTerrain() {
+        if (isGenerating) return;
+        isGenerating = true;
+
+        loadingIndicator.classList.remove("hidden");
+
+        // Use setTimeout to allow the UI to update before heavy computation
+        setTimeout(() => {
+          try {
+            initializeState();
+            const heightMap = generateHeightMap();
+            updateView();
+          } catch (error) {
+            console.error("Error generating terrain:", error);
+          } finally {
+            isGenerating = false;
+            loadingIndicator.classList.add("hidden");
+          }
+        }, 100);
+      }
+
+      // Update view based on the current view mode
+      function updateView() {
+        switch (currentView) {
+          case "3d":
+            createTerrainMesh(heightData);
+            camera.position.set(0, 40, 120);
+            camera.lookAt(0, 0, 0);
+            break;
+          case "2d":
+            createHeightMapVisualization();
+            break;
+          case "contour":
+            createContourMapVisualization();
+            break;
+        }
+      }
+
+      // Export the current terrain as SVG
+      function exportTerrainSVG() {
+        // Find min and max heights for normalization
+        let minHeight = Infinity;
+        let maxHeight = -Infinity;
+
+        for (let y = 0; y < resolution; y++) {
+          for (let x = 0; x < resolution; x++) {
+            const height = heightData[y][x];
+            minHeight = Math.min(minHeight, height);
+            maxHeight = Math.max(maxHeight, height);
+          }
+        }
+
+        // Create SVG
+        const svgSize = 1000;
+        const cellSize = svgSize / resolution;
+
+        let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgSize}" height="${svgSize}" viewBox="0 0 ${svgSize} ${svgSize}">`;
+
+        // Background
+        svgContent += `<rect width="${svgSize}" height="${svgSize}" fill="#f5f5f5" />`;
+
+        // Decide which mode to use for SVG export based on current view
+        if (currentView === "contour") {
+          // Number of contour lines
+          const contourCount = 20;
+          const contourStep = 1 / contourCount;
+
+          // Draw contour lines
+          for (let c = 0; c <= contourCount; c++) {
+            const contourValue = c * contourStep;
+            let pathData = "";
+
+            // Find all cells that cross this contour value
+            for (let y = 0; y < resolution - 1; y++) {
+              for (let x = 0; x < resolution - 1; x++) {
+                const h00 =
+                  (heightData[y][x] - minHeight) / (maxHeight - minHeight);
+                const h10 =
+                  (heightData[y][x + 1] - minHeight) / (maxHeight - minHeight);
+                const h01 =
+                  (heightData[y + 1][x] - minHeight) / (maxHeight - minHeight);
+                const h11 =
+                  (heightData[y + 1][x + 1] - minHeight) /
+                  (maxHeight - minHeight);
+
+                // Check if this cell crosses the contour line
+                const crossesContour =
+                  (h00 < contourValue &&
+                    (h10 >= contourValue ||
+                      h01 >= contourValue ||
+                      h11 >= contourValue)) ||
+                  (h10 < contourValue &&
+                    (h00 >= contourValue ||
+                      h01 >= contourValue ||
+                      h11 >= contourValue)) ||
+                  (h01 < contourValue &&
+                    (h00 >= contourValue ||
+                      h10 >= contourValue ||
+                      h11 >= contourValue)) ||
+                  (h11 < contourValue &&
+                    (h00 >= contourValue ||
+                      h10 >= contourValue ||
+                      h01 >= contourValue));
+
+                if (crossesContour) {
+                  // Simplified approach - just mark the cell center
+                  pathData += `M${(x + 0.5) * cellSize},${
+                    (y + 0.5) * cellSize
+                  } `;
+                  pathData += `L${(x + 0.5) * cellSize},${
+                    (y + 0.5) * cellSize
+                  } `;
+                }
+              }
+            }
+
+            // Determine contour color and thickness
+            let lineWidth = 0.5;
+            let alpha = 0.3;
+
+            // Make every 5th line thicker
+            if (c % 5 === 0) {
+              lineWidth = 1.0;
+              alpha = 0.7;
+            }
+
+            // Water contours in blue, land in brown
+            const contourColor =
+              contourValue < waterLevel
+                ? `rgba(0, 50, 150, ${alpha})`
+                : `rgba(100, 70, 50, ${alpha})`;
+
+            // Add path to SVG
+            svgContent += `<path d="${pathData}" stroke="${contourColor}" stroke-width="${lineWidth}" fill="none" />`;
+          }
+
+          // Draw water boundary
+          let waterPathData = "";
+
+          for (let y = 0; y < resolution - 1; y++) {
+            for (let x = 0; x < resolution - 1; x++) {
+              const h00 =
+                (heightData[y][x] - minHeight) / (maxHeight - minHeight);
+              const h10 =
+                (heightData[y][x + 1] - minHeight) / (maxHeight - minHeight);
+              const h01 =
+                (heightData[y + 1][x] - minHeight) / (maxHeight - minHeight);
+              const h11 =
+                (heightData[y + 1][x + 1] - minHeight) /
+                (maxHeight - minHeight);
+
+              // Check if this cell crosses the water line
+              const crossesWater =
+                (h00 < waterLevel &&
+                  (h10 >= waterLevel ||
+                    h01 >= waterLevel ||
+                    h11 >= waterLevel)) ||
+                (h10 < waterLevel &&
+                  (h00 >= waterLevel ||
+                    h01 >= waterLevel ||
+                    h11 >= waterLevel)) ||
+                (h01 < waterLevel &&
+                  (h00 >= waterLevel ||
+                    h10 >= waterLevel ||
+                    h11 >= waterLevel)) ||
+                (h11 < waterLevel &&
+                  (h00 >= waterLevel ||
+                    h10 >= waterLevel ||
+                    h01 >= waterLevel));
+
+              if (crossesWater) {
+                waterPathData += `M${(x + 0.5) * cellSize},${
+                  (y + 0.5) * cellSize
+                } `;
+                waterPathData += `L${(x + 0.5) * cellSize},${
+                  (y + 0.5) * cellSize
+                } `;
+              }
+            }
+          }
+
+          // Add water boundary to SVG
+          svgContent += `<path d="${waterPathData}" stroke="rgba(0, 100, 200, 0.9)" stroke-width="1.5" fill="none" />`;
+
+          // Fill water areas with light blue
+          for (let y = 0; y < resolution; y++) {
+            for (let x = 0; x < resolution; x++) {
+              const normalizedHeight =
+                (heightData[y][x] - minHeight) / (maxHeight - minHeight);
+
+              if (normalizedHeight < waterLevel) {
+                svgContent += `<rect x="${x * cellSize}" y="${
+                  y * cellSize
+                }" width="${cellSize}" height="${cellSize}" fill="rgba(100, 180, 255, 0.2)" />`;
+              }
+            }
+          }
+        } else {
+          // Create color map squares
+          for (let y = 0; y < resolution; y++) {
+            for (let x = 0; x < resolution; x++) {
+              const height = heightData[y][x];
+              const normalizedHeight =
+                (height - minHeight) / (maxHeight - minHeight);
+
+              let fillColor;
+
+              // Water or land coloring
+              if (normalizedHeight < waterLevel) {
+                const waterDepth = 1 - normalizedHeight / waterLevel;
+                const waterColor = getWaterColor();
+
+                // Convert hex color to RGB
+                const r = (waterColor >> 16) & 255;
+                const g = (waterColor >> 8) & 255;
+                const b = waterColor & 255;
+
+                // Darken based on depth
+                const depthFactor = 1 - waterDepth * 0.5;
+                fillColor = `rgb(${r * depthFactor}, ${g * depthFactor}, ${
+                  b * depthFactor
+                })`;
+              } else {
+                // Land colors based on height and biome
+                const colorMaps = {
+                  mountains: [
+                    { height: 0.1, color: [45, 68, 48] }, // Deep forest
+                    { height: 0.3, color: [90, 119, 82] }, // Forest
+                    { height: 0.5, color: [139, 126, 85] }, // Rocky terrain
+                    { height: 0.7, color: [187, 184, 165] }, // Lighter rock
+                    { height: 0.85, color: [230, 230, 230] }, // Snow
+                    { height: 1.0, color: [255, 255, 255] }, // Peak snow
+                  ],
+                  islands: [
+                    { height: 0.2, color: [240, 218, 149] }, // Beach
+                    { height: 0.4, color: [152, 200, 73] }, // Low vegetation
+                    { height: 0.7, color: [82, 158, 61] }, // Dense vegetation
+                    { height: 0.9, color: [32, 122, 45] }, // Jungle
+                    { height: 1.0, color: [42, 98, 59] }, // Dense jungle
+                  ],
+                  desert: [
+                    { height: 0.2, color: [230, 193, 122] }, // Light sand
+                    { height: 0.4, color: [217, 177, 102] }, // Sand
+                    { height: 0.6, color: [193, 158, 86] }, // Rocky sand
+                    { height: 0.8, color: [163, 131, 77] }, // Desert rock
+                    { height: 1.0, color: [122, 99, 56] }, // Rocky outcrops
+                  ],
+                  hills: [
+                    { height: 0.2, color: [145, 178, 71] }, // Meadow
+                    { height: 0.4, color: [126, 172, 63] }, // Grassland
+                    { height: 0.6, color: [97, 128, 53] }, // Hills
+                    { height: 0.8, color: [85, 107, 47] }, // Forest
+                    { height: 1.0, color: [61, 82, 41] }, // Dense forest
+                  ],
+                  canyon: [
+                    { height: 0.2, color: [165, 107, 57] }, // Canyon floor
+                    { height: 0.4, color: [185, 120, 58] }, // Low rock
+                    { height: 0.6, color: [213, 137, 71] }, // Middle rock
+                    { height: 0.8, color: [230, 166, 108] }, // Upper rock
+                    { height: 1.0, color: [240, 190, 148] }, // Top rock
+                  ],
+                };
+
+                const colorMap = colorMaps[currentBiome];
+
+                // Find colors to interpolate between
+                let startColor, endColor, t;
+                const landHeight =
+                  (normalizedHeight - waterLevel) / (1 - waterLevel);
+
+                for (let i = 0; i < colorMap.length - 1; i++) {
+                  if (landHeight <= colorMap[i + 1].height) {
+                    startColor = colorMap[i].color;
+                    endColor = colorMap[i + 1].color;
+                    t =
+                      (landHeight - colorMap[i].height) /
+                      (colorMap[i + 1].height - colorMap[i].height);
+                    break;
+                  }
+                }
+
+                if (!startColor) {
+                  startColor = colorMap[colorMap.length - 2].color;
+                  endColor = colorMap[colorMap.length - 1].color;
+                  t = 1;
+                }
+
+                // Interpolate color
+                const r = Math.floor(
+                  startColor[0] + t * (endColor[0] - startColor[0])
+                );
+                const g = Math.floor(
+                  startColor[1] + t * (endColor[1] - startColor[1])
+                );
+                const b = Math.floor(
+                  startColor[2] + t * (endColor[2] - startColor[2])
+                );
+
+                fillColor = `rgb(${r}, ${g}, ${b})`;
+              }
+
+              // Add rectangle to SVG
+              svgContent += `<rect x="${x * cellSize}" y="${
+                y * cellSize
+              }" width="${cellSize}" height="${cellSize}" fill="${fillColor}" />`;
+            }
+          }
+        }
+
+        // Close SVG
+        svgContent += "</svg>";
+
+        // Create downloadable link
+        const blob = new Blob([svgContent], { type: "image/svg+xml" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `terrain-${currentBiome}-${Date.now()}.svg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      // Initialize everything
+      function initialize() {
+        initializeState();
+        setupEventListeners();
+        initThree();
+        generateTerrain();
+      }
+
+      // Start when DOM is loaded
+      window.addEventListener("DOMContentLoaded", initialize);
+    </script>
+  </body>
+</html>

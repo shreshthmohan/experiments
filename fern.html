@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unfurling Fern Spiral</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #0a1a2a;
+        font-family: "Arial", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        color: #8ebdb6;
+      }
+
+      #canvas-container {
+        position: relative;
+        width: 90vw;
+        height: 80vh;
+        max-width: 800px;
+        max-height: 800px;
+      }
+
+      svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .controls {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        width: 80%;
+        max-width: 600px;
+      }
+
+      .slider-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      label {
+        margin-bottom: 5px;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        margin-bottom: 5px;
+        cursor: pointer;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 5px;
+      }
+
+      button {
+        background-color: #1e4e5f;
+        color: #c9f0e4;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background-color: #2a6e86;
+      }
+
+      .title {
+        margin-bottom: 20px;
+        font-size: 24px;
+        letter-spacing: 1px;
+        color: #a5dbca;
+        text-align: center;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        opacity: 0.8;
+        margin-bottom: 30px;
+        text-align: center;
+        max-width: 600px;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title">The Unfurling Spiral</div>
+    <div class="subtitle">
+      Witness the ancient dance of emergence as the fern's spiral unfurls - a
+      pattern echoed from galaxies to seashells, revealing the mathematics woven
+      into the fabric of life itself.
+    </div>
+
+    <div id="canvas-container">
+      <svg
+        id="fern-canvas"
+        viewBox="0 0 800 800"
+        preserveAspectRatio="xMidYMid meet"
+      ></svg>
+    </div>
+
+    <div class="controls">
+      <div class="slider-container">
+        <label for="complexity">Complexity</label>
+        <input
+          type="range"
+          id="complexity"
+          min="3"
+          max="12"
+          value="8"
+          step="1"
+        />
+      </div>
+
+      <div class="slider-container">
+        <label for="unfurling-speed">Unfurling Speed</label>
+        <input
+          type="range"
+          id="unfurling-speed"
+          min="0.2"
+          max="3"
+          value="1"
+          step="0.1"
+        />
+      </div>
+
+      <div class="slider-container">
+        <label for="color-scheme">Color Expression</label>
+        <input
+          type="range"
+          id="color-scheme"
+          min="0"
+          max="2"
+          value="1"
+          step="0.01"
+        />
+      </div>
+
+      <div class="buttons">
+        <button id="reset-btn">Reset</button>
+        <button id="regenerate-btn">Regenerate</button>
+      </div>
+    </div>
+
+    <script>
+      // Constants and configuration
+      const svg = document.getElementById("fern-canvas");
+      const PHI = (1 + Math.sqrt(5)) / 2; // Golden ratio
+
+      // State variables
+      let fernElements = [];
+      let animationId;
+      let mouseX = 400;
+      let mouseY = 400;
+      let unfurlingProgress = 0;
+      let isUnfurling = true;
+
+      // Helper functions
+      function lerp(start, end, t) {
+        return start * (1 - t) + end * t;
+      }
+
+      function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
+      function mapRange(value, inMin, inMax, outMin, outMax) {
+        return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+      }
+
+      // Generate colors based on depth and color scheme
+      function getColor(depth, maxDepth, progress, colorScheme) {
+        const depthRatio = depth / maxDepth;
+        const hue = lerp(210, 140, Math.pow(depthRatio, 0.7));
+
+        // Adjust saturation and brightness based on color scheme
+        let saturation, lightness;
+
+        if (colorScheme < 0.5) {
+          // Cool blue-purple theme
+          saturation = lerp(70, 90, depthRatio);
+          lightness = lerp(60, 40, depthRatio);
+        } else if (colorScheme < 1.5) {
+          // Green-blue theme (default)
+          saturation = lerp(80, 90, depthRatio);
+          lightness = lerp(65, 45, depthRatio);
+        } else {
+          // Warm earth tones
+          const adjustedHue = lerp(40, 100, Math.pow(depthRatio, 0.6));
+          saturation = lerp(70, 90, depthRatio);
+          lightness = lerp(60, 35, depthRatio);
+          return `hsl(${adjustedHue}, ${saturation}%, ${lightness}%)`;
+        }
+
+        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+      }
+
+      // Create a single spiral element
+      function createSpiralElement(
+        cx,
+        cy,
+        startAngle,
+        endAngle,
+        startRadius,
+        endRadius,
+        depth,
+        maxDepth
+      ) {
+        const points = [];
+        const steps = 30;
+
+        for (let i = 0; i <= steps; i++) {
+          const t = i / steps;
+          const angle = lerp(startAngle, endAngle, t);
+          const radius = lerp(startRadius, endRadius, t);
+          const x = cx + radius * Math.cos(angle);
+          const y = cy + radius * Math.sin(angle);
+          points.push(`${x},${y}`);
+        }
+
+        const polyline = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "polyline"
+        );
+        polyline.setAttribute("points", points.join(" "));
+        polyline.setAttribute("fill", "none");
+        polyline.setAttribute(
+          "stroke-width",
+          mapRange(depth, 0, maxDepth, 5, 1.5)
+        );
+        polyline.setAttribute("stroke-linecap", "round");
+        polyline.setAttribute("opacity", 0);
+
+        return polyline;
+      }
+
+      // Generate the full fern structure
+      function generateFern(complexity = 8) {
+        clearFern();
+
+        const maxDepth = complexity;
+        const centerX = 400;
+        const centerY = 500;
+
+        // Generate the main spiral
+        generateSpiral(centerX, centerY, 0, maxDepth, 0, Math.PI * 4, 10, 300);
+
+        // Add some variation
+        const variations = 2 + Math.floor(Math.random() * 3);
+        for (let i = 0; i < variations; i++) {
+          const angle = Math.PI / 4 + (Math.PI / 2) * Math.random();
+          const distance = 30 + Math.random() * 60;
+          const x = centerX + Math.cos(angle) * distance;
+          const y = centerY + Math.sin(angle) * distance;
+          generateSpiral(
+            x,
+            y,
+            0,
+            maxDepth - 2 - Math.floor(Math.random() * 2),
+            angle,
+            angle + Math.PI * (2 + Math.random()),
+            5,
+            120 + Math.random() * 80
+          );
+        }
+
+        // Start the unfurling animation
+        unfurlingProgress = 0;
+        isUnfurling = true;
+        animate();
+      }
+
+      // Recursively generate spiral structure
+      function generateSpiral(
+        cx,
+        cy,
+        depth,
+        maxDepth,
+        startAngle,
+        endAngle,
+        startRadius,
+        endRadius
+      ) {
+        if (depth >= maxDepth) return;
+
+        // Create this level's spiral
+        const spiral = createSpiralElement(
+          cx,
+          cy,
+          startAngle,
+          endAngle,
+          startRadius,
+          endRadius,
+          depth,
+          maxDepth
+        );
+        svg.appendChild(spiral);
+
+        fernElements.push({
+          element: spiral,
+          depth: depth,
+          maxDepth: maxDepth,
+          cx: cx,
+          cy: cy,
+          startAngle: startAngle,
+          endAngle: endAngle,
+        });
+
+        // Generate sub-spirals
+        if (depth < maxDepth - 1) {
+          const branchCount = Math.max(1, Math.floor((maxDepth - depth) / 2));
+
+          for (let i = 0; i < branchCount; i++) {
+            const t = (i + 0.5) / branchCount;
+            const angle = lerp(startAngle, endAngle, t);
+            const radius = lerp(startRadius, endRadius, t);
+
+            const newCX = cx + radius * Math.cos(angle);
+            const newCY = cy + radius * Math.sin(angle);
+
+            const newStartAngle = angle + Math.PI / 2;
+            const newEndAngle =
+              newStartAngle + Math.PI * (1.5 + Math.random() * 0.5);
+            const newStartRadius = 5 + Math.random() * 5;
+            const newEndRadius =
+              (endRadius / 2) *
+              (1 - depth / maxDepth) *
+              (0.7 + Math.random() * 0.6);
+
+            generateSpiral(
+              newCX,
+              newCY,
+              depth + 1,
+              maxDepth,
+              newStartAngle,
+              newEndAngle,
+              newStartRadius,
+              newEndRadius
+            );
+          }
+        }
+      }
+
+      // Animation loop
+      function animate() {
+        const speedFactor = parseFloat(
+          document.getElementById("unfurling-speed").value
+        );
+        const colorScheme = parseFloat(
+          document.getElementById("color-scheme").value
+        );
+
+        if (isUnfurling) {
+          unfurlingProgress += 0.005 * speedFactor;
+          if (unfurlingProgress >= 1) {
+            unfurlingProgress = 1;
+            isUnfurling = false;
+          }
+        }
+
+        // Update each element based on unfurling progress
+        fernElements.forEach((item) => {
+          const { element, depth, maxDepth, cx, cy } = item;
+
+          // Calculate when this element should start appearing based on its depth
+          const depthRatio = depth / maxDepth;
+          const startTime = depthRatio * 0.7; // Deeper elements start later
+          const endTime = startTime + 0.3;
+
+          // Calculate local progress for this element
+          let localProgress =
+            (unfurlingProgress - startTime) / (endTime - startTime);
+          localProgress = Math.max(0, Math.min(1, localProgress));
+
+          // Apply easing for smoother animation
+          const easedProgress = easeInOutCubic(localProgress);
+
+          // Set opacity based on progress
+          element.setAttribute("opacity", easedProgress);
+
+          // Set color based on depth and progress
+          element.setAttribute(
+            "stroke",
+            getColor(depth, maxDepth, easedProgress, colorScheme)
+          );
+
+          // Add subtle movement influenced by mouse position
+          const mouseInfluence = 0.02 * (1 - depthRatio);
+          const dx = (mouseX - 400) * mouseInfluence;
+          const dy = (mouseY - 400) * mouseInfluence;
+
+          const currentTransform = `translate(${dx * easedProgress}, ${
+            dy * easedProgress
+          })`;
+          element.setAttribute("transform", currentTransform);
+        });
+
+        animationId = requestAnimationFrame(animate);
+      }
+
+      // Clear existing fern
+      function clearFern() {
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+        }
+
+        while (svg.firstChild) {
+          svg.removeChild(svg.firstChild);
+        }
+
+        fernElements = [];
+      }
+
+      // Event listeners
+      document
+        .getElementById("regenerate-btn")
+        .addEventListener("click", () => {
+          const complexity = parseInt(
+            document.getElementById("complexity").value
+          );
+          generateFern(complexity);
+        });
+
+      document.getElementById("reset-btn").addEventListener("click", () => {
+        unfurlingProgress = 0;
+        isUnfurling = true;
+      });
+
+      svg.addEventListener("mousemove", (e) => {
+        const rect = svg.getBoundingClientRect();
+        mouseX = ((e.clientX - rect.left) / rect.width) * 800;
+        mouseY = ((e.clientY - rect.top) / rect.height) * 800;
+      });
+
+      // Touch support for mobile
+      svg.addEventListener("touchmove", (e) => {
+        e.preventDefault();
+        const rect = svg.getBoundingClientRect();
+        const touch = e.touches[0];
+        mouseX = ((touch.clientX - rect.left) / rect.width) * 800;
+        mouseY = ((touch.clientY - rect.top) / rect.height) * 800;
+      });
+
+      // Initialize
+      window.addEventListener("load", () => {
+        const complexity = parseInt(
+          document.getElementById("complexity").value
+        );
+        generateFern(complexity);
+      });
+    </script>
+  </body>
+</html>

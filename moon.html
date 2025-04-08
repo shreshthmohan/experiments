@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sarang Station - Lunar Industries</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap");
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        font-family: "Space Mono", monospace;
+        background-color: #000;
+        color: #bcd;
+      }
+
+      #viewport {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+
+      .station-interior {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            ellipse at center,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0) 70%,
+            rgba(40, 45, 50, 0.9) 100%
+          ),
+          url("https://api.placeholder/400/320");
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      .station-frame {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow: inset 0 0 100px 40px #111;
+        border: 24px solid #333;
+        border-radius: 20px;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .interface-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 20;
+        pointer-events: none;
+      }
+
+      .interface-element {
+        pointer-events: auto;
+        background-color: rgba(20, 30, 40, 0.7);
+        backdrop-filter: blur(3px);
+        border: 1px solid rgba(100, 160, 200, 0.4);
+        border-radius: 4px;
+        box-shadow: 0 0 10px rgba(100, 160, 200, 0.2);
+      }
+
+      .data-readout {
+        font-size: 12px;
+        line-height: 1.2;
+      }
+
+      .harvester-marker {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 25;
+        transition: all 0.3s ease;
+      }
+
+      .harvester-marker::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 10px;
+        height: 10px;
+        background-color: rgba(100, 200, 255, 0.8);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 10px 2px rgba(100, 200, 255, 0.6);
+      }
+
+      .harvester-marker::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        border: 1px solid rgba(100, 200, 255, 0.6);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: pulse 3s infinite;
+      }
+
+      .harvester-marker.active::after {
+        width: 25px;
+        height: 25px;
+        border: 2px solid rgba(100, 200, 255, 0.8);
+      }
+
+      .harvester-marker.maintenance {
+        opacity: 0.7;
+      }
+
+      .harvester-marker.maintenance::before {
+        background-color: rgba(255, 200, 100, 0.8);
+        box-shadow: 0 0 10px 2px rgba(255, 200, 100, 0.6);
+      }
+
+      .harvester-marker.offline {
+        opacity: 0.5;
+      }
+
+      .harvester-marker.offline::before {
+        background-color: rgba(255, 100, 100, 0.8);
+        box-shadow: 0 0 10px 2px rgba(255, 100, 100, 0.6);
+      }
+
+      .system-panel {
+        opacity: 0.95;
+        transition: all 0.3s ease;
+      }
+
+      .system-panel:hover {
+        opacity: 1;
+      }
+
+      .gerty-panel {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 300px;
+        height: 120px;
+        z-index: 30;
+        opacity: 0.9;
+        transition: all 0.3s ease;
+      }
+
+      .gerty-panel:hover {
+        opacity: 1;
+      }
+
+      .subtle-flicker {
+        animation: flicker 8s infinite;
+      }
+
+      .breath-effect {
+        animation: breathe 6s infinite;
+      }
+
+      .overlay-text {
+        text-shadow: 0 0 5px rgba(100, 160, 200, 0.7);
+      }
+
+      .panel-header {
+        border-bottom: 1px solid rgba(100, 160, 200, 0.3);
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 0.8;
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+        50% {
+          opacity: 0.3;
+          transform: translate(-50%, -50%) scale(1.2);
+        }
+        100% {
+          opacity: 0.8;
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+      }
+
+      @keyframes flicker {
+        0% {
+          opacity: 1;
+        }
+        3% {
+          opacity: 0.8;
+        }
+        6% {
+          opacity: 1;
+        }
+        7% {
+          opacity: 0.9;
+        }
+        8% {
+          opacity: 1;
+        }
+        94% {
+          opacity: 1;
+        }
+        96% {
+          opacity: 0.8;
+        }
+        98% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      @keyframes breathe {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.02);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .progress-bar {
+        height: 4px;
+        background-color: rgba(60, 70, 80, 0.5);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        border-radius: 2px;
+        transition: width 1s ease;
+      }
+
+      .system-alert {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 50;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+      }
+
+      .system-alert.show {
+        opacity: 1;
+      }
+
+      .memory-glitch {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("/api/placeholder/400/320");
+        background-size: cover;
+        opacity: 0;
+        z-index: 100;
+        mix-blend-mode: screen;
+        pointer-events: none;
+      }
+
+      .redacted {
+        background-color: rgba(255, 100, 100, 0.3);
+        padding: 0 3px;
+        border-radius: 2px;
+      }
+
+      .quiet-hint {
+        opacity: 0.5;
+        font-size: 0.7em;
+      }
+    </style>
+  </head>
+  <body class="text-gray-300">
+    <!-- Lunar landscape viewport - ThreeJS will render here -->
+    <div id="viewport"></div>
+
+    <!-- Station interior suggestion -->
+    <div class="station-interior"></div>
+
+    <!-- Station viewport frame -->
+    <div class="station-frame"></div>
+
+    <!-- Interface overlay -->
+    <div class="interface-overlay p-6 grid grid-cols-12 gap-2">
+      <!-- Header information -->
+      <div class="col-span-12 flex justify-between items-center px-4 py-2">
+        <div class="overlay-text">
+          <h1 class="text-xl text-blue-300">LUNAR INDUSTRIES LTD.</h1>
+          <p class="text-sm text-gray-400">
+            SARANG STATION · SOLE OPERATOR: SAM BELL
+          </p>
+        </div>
+        <div class="text-right overlay-text">
+          <p id="current-time" class="text-xl">00:00:00</p>
+          <p id="earth-date" class="text-xs text-gray-400">
+            EARTH DATE: --/--/----
+          </p>
+          <p id="contract-countdown" class="text-xs text-yellow-300">
+            CONTRACT: 167 DAYS REMAINING
+          </p>
+        </div>
+      </div>
+
+      <!-- Left side panels -->
+      <div class="col-span-3 space-y-2">
+        <!-- Harvester details -->
+        <div
+          id="harvester-panel"
+          class="interface-element system-panel p-3 h-64"
+        >
+          <div class="panel-header pb-2 mb-2">
+            <h2 class="text-md text-blue-300">HARVESTER DETAILS</h2>
+          </div>
+          <div id="harvester-details" class="data-readout">
+            <p class="text-center text-gray-400 mt-12">
+              Select a harvester on the lunar surface
+            </p>
+          </div>
+        </div>
+
+        <!-- Health monitor -->
+        <div class="interface-element system-panel p-3">
+          <div class="panel-header pb-2 mb-2">
+            <h2 class="text-md text-blue-300">OPERATOR STATUS</h2>
+          </div>
+          <div class="data-readout">
+            <div class="flex justify-between items-center">
+              <p>VITAL SIGNS:</p>
+              <p class="text-yellow-300">MILD FATIGUE</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mt-2">
+              <div>
+                <p class="text-xs text-gray-400">HEART RATE</p>
+                <p>76 BPM</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400">BLOOD O₂</p>
+                <p>98%</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400">SLEEP QUALITY</p>
+                <p>67%</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400">COGNITIVE</p>
+                <p class="text-yellow-300">
+                  NOMINAL<span class="redacted">*</span>
+                </p>
+              </div>
+            </div>
+            <p class="text-xs text-gray-400 mt-2 quiet-hint">
+              * <span class="redacted">Memory irregularities detected</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Station resources -->
+        <div class="interface-element system-panel p-3">
+          <div class="panel-header pb-2 mb-2">
+            <h2 class="text-md text-blue-300">STATION RESOURCES</h2>
+          </div>
+          <div class="data-readout space-y-2">
+            <div>
+              <div class="flex justify-between text-xs">
+                <span>OXYGEN</span>
+                <span>92%</span>
+              </div>
+              <div class="progress-bar mt-1">
+                <div
+                  class="progress-fill bg-green-400"
+                  style="width: 92%"
+                ></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs">
+                <span>WATER</span>
+                <span>89%</span>
+              </div>
+              <div class="progress-bar mt-1">
+                <div
+                  class="progress-fill bg-green-400"
+                  style="width: 89%"
+                ></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs">
+                <span>FOOD</span>
+                <span>76%</span>
+              </div>
+              <div class="progress-bar mt-1">
+                <div
+                  class="progress-fill bg-green-400"
+                  style="width: 76%"
+                ></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs">
+                <span>HE-3 STORAGE</span>
+                <span>63%</span>
+              </div>
+              <div class="progress-bar mt-1">
+                <div
+                  class="progress-fill bg-yellow-400"
+                  style="width: 63%"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center area - empty to allow view of lunar surface -->
+      <div class="col-span-6"></div>
+
+      <!-- Right side panels -->
+      <div class="col-span-3 space-y-2">
+        <!-- Earth observation -->
+        <div class="interface-element system-panel p-3">
+          <div class="panel-header pb-2 mb-2">
+            <h2 class="text-md text-blue-300">EARTH OBSERVATION</h2>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-gray-400">DISTANCE: 384,400 KM</p>
+            <div
+              class="w-24 h-24 rounded-full bg-blue-900 mx-auto my-2 subtle-flicker breath-effect"
+              id="earth-visual"
+            ></div>
+            <p class="text-xs text-gray-400">COMMUNICATION STATUS:</p>
+            <p class="text-yellow-300">DELAYED TRANSMISSION</p>
+          </div>
+        </div>
+
+        <!-- Communications log -->
+        <div
+          class="interface-element system-panel p-3 max-h-64 overflow-y-auto"
+        >
+          <div class="panel-header pb-2 mb-2 flex justify-between items-center">
+            <h2 class="text-md text-blue-300">COMMUNICATIONS</h2>
+            <span class="px-2 py-0.5 text-xs bg-red-900 text-white rounded"
+              >LIVE FEED UNAVAILABLE</span
+            >
+          </div>
+          <div class="data-readout space-y-2">
+            <div class="p-2 bg-gray-800 bg-opacity-50 rounded">
+              <p class="text-xs text-gray-400">LUNAR INDUSTRIES → SARANG</p>
+              <p class="text-sm">
+                Production reports received. Keep up the good work, Sam.
+              </p>
+            </div>
+            <div class="p-2 bg-gray-800 bg-opacity-50 rounded">
+              <p class="text-xs text-gray-400">LUNAR INDUSTRIES → SARANG</p>
+              <p class="text-sm">
+                Satellite issues continue. Expect communication delays.
+              </p>
+            </div>
+            <div class="p-2 bg-gray-800 bg-opacity-50 rounded opacity-70">
+              <p class="text-xs text-gray-400">SARANG → EARTH</p>
+              <p class="text-sm">
+                Request family video call. Please confirm availability.
+              </p>
+              <p class="text-xs text-red-300">NO RESPONSE (14 DAYS)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tasks and maintenance -->
+        <div class="interface-element system-panel p-3">
+          <div class="panel-header pb-2 mb-2">
+            <h2 class="text-md text-blue-300">PENDING TASKS</h2>
+          </div>
+          <div class="data-readout space-y-1">
+            <div class="flex items-center">
+              <div class="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
+              <span class="text-sm">EVA: Repair Harvester Unit #04</span>
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></div>
+              <span class="text-sm">Helium-3 Canister Transfer</span>
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+              <span class="text-sm">Station Air Filtration Check</span>
+            </div>
+            <div class="flex items-center opacity-50">
+              <div class="w-2 h-2 rounded-full bg-gray-500 mr-2"></div>
+              <span class="text-sm line-through">Greenhouse Maintenance</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GERTY interaction module -->
+      <div class="gerty-panel interface-element p-3">
+        <div class="flex items-center h-full">
+          <div
+            class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mr-4"
+          >
+            <div
+              class="w-12 h-12 rounded-full bg-yellow-300 flex items-center justify-center"
+            >
+              <span class="text-black text-xl">:)</span>
+            </div>
+          </div>
+          <div class="flex-1 flex flex-col justify-between h-full">
+            <div>
+              <p class="text-sm">
+                Good morning, Sam. How are you feeling today?
+              </p>
+            </div>
+            <div class="pt-2">
+              <input
+                type="text"
+                placeholder="Type a message to GERTY..."
+                class="w-full bg-gray-800 border-none rounded p-1 text-sm"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Harvester markers -->
+    <div id="harvester-markers">
+      <div
+        class="harvester-marker active"
+        style="top: 40%; left: 30%"
+        data-id="1"
+        data-status="operational"
+        data-location="SECTOR A-7"
+      ></div>
+      <div
+        class="harvester-marker active"
+        style="top: 60%; left: 50%"
+        data-id="2"
+        data-status="operational"
+        data-location="SECTOR B-3"
+      ></div>
+      <div
+        class="harvester-marker maintenance"
+        style="top: 45%; left: 70%"
+        data-id="3"
+        data-status="maintenance"
+        data-location="SECTOR C-5"
+      ></div>
+      <div
+        class="harvester-marker offline"
+        style="top: 55%; left: 85%"
+        data-id="4"
+        data-status="offline"
+        data-location="SECTOR D-9"
+      ></div>
+    </div>
+
+    <!-- System alerts -->
+    <div id="system-alert" class="system-alert interface-element p-4 max-w-md">
+      <h3 class="text-red-300 mb-2">SYSTEM NOTIFICATION</h3>
+      <p id="alert-message">
+        Harvester Unit #04 requires immediate EVA maintenance.
+      </p>
+      <div class="flex justify-end mt-4">
+        <button
+          id="alert-confirm"
+          class="px-3 py-1 bg-gray-700 text-white rounded"
+        >
+          Acknowledge
+        </button>
+      </div>
+    </div>
+
+    <!-- Memory glitch overlay -->
+    <div id="memory-glitch" class="memory-glitch"></div>
+
+    <script>
+      // Initialize Three.js scene
+      let scene, camera, renderer;
+      let moonSurface, earth;
+
+      function initScene() {
+        // Create scene
+        scene = new THREE.Scene();
+
+        // Create camera
+        camera = new THREE.PerspectiveCamera(
+          60,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
+        camera.position.set(0, 5, 10);
+        camera.lookAt(0, 0, 0);
+
+        // Create renderer
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 1);
+        document.getElementById("viewport").appendChild(renderer.domElement);
+
+        // Create lighting
+        const ambientLight = new THREE.AmbientLight(0x333333);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 3, 5);
+        scene.add(directionalLight);
+
+        // Create moon surface
+        const moonGeometry = new THREE.PlaneGeometry(100, 100, 32, 32);
+        const moonTexture = new THREE.TextureLoader().load(
+          "/api/placeholder/400/320"
+        );
+        const moonMaterial = new THREE.MeshStandardMaterial({
+          color: 0x888888,
+          roughness: 0.9,
+          metalness: 0.1,
+          displacementScale: 0.2,
+        });
+
+        moonSurface = new THREE.Mesh(moonGeometry, moonMaterial);
+        moonSurface.rotation.x = -Math.PI / 2;
+        moonSurface.position.y = -2;
+        scene.add(moonSurface);
+
+        // Create distant Earth
+        const earthGeometry = new THREE.SphereGeometry(5, 32, 32);
+        const earthMaterial = new THREE.MeshBasicMaterial({
+          color: 0x1155aa,
+          transparent: true,
+          opacity: 0.8,
+        });
+
+        earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        earth.position.set(50, 30, -80);
+        scene.add(earth);
+
+        // Handle window resize
+        window.addEventListener("resize", onWindowResize, false);
+
+        animate();
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // Slow Earth rotation
+        earth.rotation.y += 0.001;
+
+        renderer.render(scene, camera);
+      }
+
+      // Initialize the scene
+      initScene();
+
+      // Update time and date
+      function updateDateTime() {
+        const now = new Date();
+        document.getElementById("current-time").textContent =
+          now.toLocaleTimeString("en-US", { hour12: false });
+        document.getElementById("earth-date").textContent =
+          "EARTH DATE: " +
+          now
+            .toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+            .replace(/\//g, "-");
+
+        // Simulate contract countdown
+        const contractDays = 167;
+        const contractHours = Math.floor(Math.random() * 24);
+        const contractMinutes = Math.floor(Math.random() * 60);
+        document.getElementById(
+          "contract-countdown"
+        ).textContent = `CONTRACT: ${contractDays}D ${contractHours}H ${contractMinutes}M`;
+      }
+
+      setInterval(updateDateTime, 1000);
+      updateDateTime();
+
+      // Earth visual effect
+      function updateEarthVisual() {
+        const earthVisual = document.getElementById("earth-visual");
+        const brightness = 0.9 + Math.random() * 0.1;
+        earthVisual.style.opacity = brightness;
+      }
+
+      setInterval(updateEarthVisual, 5000);
+
+      // Harvester selection
+      const harvesterMarkers = document.querySelectorAll(".harvester-marker");
+      const harvesterPanel = document.getElementById("harvester-details");
+
+      harvesterMarkers.forEach((marker) => {
+        marker.addEventListener("click", function () {
+          const harvesterId = this.getAttribute("data-id");
+          const status = this.getAttribute("data-status");
+          const location = this.getAttribute("data-location");
+
+          harvesterMarkers.forEach((m) => m.classList.remove("active"));
+          this.classList.add("active");
+
+          let statusColor = "text-green-400";
+          let statusText = "OPERATIONAL";
+          let yield = "0%";
+          let power = "0%";
+
+          if (status === "operational") {
+            statusColor = "text-green-400";
+            statusText = "OPERATIONAL";
+            yield = Math.floor(90 + Math.random() * 9) + "%";
+            power = Math.floor(85 + Math.random() * 14) + "%";
+          } else if (status === "maintenance") {
+            statusColor = "text-yellow-400";
+            statusText = "MAINTENANCE";
+            yield = "0%";
+            power = "15%";
+          } else if (status === "offline") {
+            statusColor = "text-red-400";
+            statusText = "OFFLINE";
+            yield = "0%";
+            power = "0%";
+          }
+
+          harvesterPanel.innerHTML = `
+                    <h3 class="text-lg">HARVESTER UNIT #${harvesterId}</h3>
+                    <p class="mb-3 ${statusColor}">${statusText}</p>
+                    <div class="grid grid-cols-2 gap-1 text-sm">
+                        <div>LOCATION:</div>
+                        <div>${location}</div>
+                        <div>YIELD RATE:</div>
+                        <div>${yield}</div>
+                        <div>POWER:</div>
+                        <div>${power}</div>
+                        <div>TEMP:</div>
+                        <div>${status === "operational" ? "42°C" : "22°C"}</div>
+                    </div>
+                    ${
+                      status === "offline"
+                        ? '<p class="mt-3 text-red-300 text-xs">* EVA REQUIRED FOR REPAIRS</p>'
+                        : ""
+                    }
+                    ${
+                      status === "maintenance"
+                        ? '<p class="mt-3 text-yellow-300 text-xs">* AWAITING COMPONENT REPLACEMENT</p>'
+                        : ""
+                    }
+                `;
+
+          // If offline harvester selected, show system alert
+          if (status === "offline") {
+            setTimeout(() => {
+              document.getElementById("system-alert").classList.add("show");
+            }, 500);
+          }
+        });
+      });
+
+      // System alert handling
+      document
+        .getElementById("alert-confirm")
+        .addEventListener("click", function () {
+          document.getElementById("system-alert").classList.remove("show");
+        });
+
+      // Occasional memory glitch
+      function triggerMemoryGlitch() {
+        if (Math.random() > 0.7) {
+          const glitch = document.getElementById("memory-glitch");
+          glitch.style.opacity = "0.2";
+          setTimeout(() => {
+            glitch.style.opacity = "0";
+          }, 200);
+        }
+      }
+
+      setInterval(triggerMemoryGlitch, 30000);
+
+      // Subtle UI system noise
+      function systemNoise() {
+        if (Math.random() > 0.8) {
+          document.body.classList.add("opacity-95");
+          setTimeout(() => {
+            document.body.classList.remove("opacity-95");
+          }, 100);
+        }
+      }
+
+      setInterval(systemNoise, 15000);
+    </script>
+  </body>
+</html>
