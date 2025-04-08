@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tree Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+      input[type="range"] {
+        @apply h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        @apply appearance-none w-4 h-4 rounded-full bg-green-600;
+      }
+      .color-block {
+        @apply w-6 h-6 rounded cursor-pointer transition-all duration-200;
+      }
+      .color-block:hover {
+        @apply ring-2 ring-green-400;
+      }
+      .color-block.active {
+        @apply ring-2 ring-green-700;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <div class="container mx-auto p-4">
+      <div class="mb-6 text-center">
+        <h1 class="text-3xl font-bold text-green-800 mb-2">
+          Living Tree Generator
+        </h1>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Each tree is a living poem of form and relationship, a unique
+          expression of both genetic heritage and environmental dialogue.
+        </p>
+      </div>
+
+      <div class="flex flex-col lg:flex-row gap-6">
+        <!-- Controls Panel -->
+        <div class="lg:w-1/3 bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold text-green-700 mb-4">
+            Tree Attributes
+          </h2>
+
+          <div class="space-y-6">
+            <!-- Tree Size -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Canopy Presence</label
+              >
+              <div class="flex items-center gap-3">
+                <input
+                  type="range"
+                  id="tree-size"
+                  min="20"
+                  max="200"
+                  value="80"
+                  class="w-full"
+                />
+                <span
+                  id="tree-size-value"
+                  class="text-sm font-medium w-8 text-right"
+                  >80</span
+                >
+              </div>
+            </div>
+
+            <!-- Tree Complexity -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Form Complexity</label
+              >
+              <div class="flex items-center gap-3">
+                <input
+                  type="range"
+                  id="complexity"
+                  min="3"
+                  max="30"
+                  value="12"
+                  class="w-full"
+                />
+                <span
+                  id="complexity-value"
+                  class="text-sm font-medium w-8 text-right"
+                  >12</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                Intricacy of canopy patterns
+              </p>
+            </div>
+
+            <!-- Canopy Irregularity -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Organic Variability</label
+              >
+              <div class="flex items-center gap-3">
+                <input
+                  type="range"
+                  id="irregularity"
+                  min="0"
+                  max="100"
+                  value="40"
+                  class="w-full"
+                />
+                <span
+                  id="irregularity-value"
+                  class="text-sm font-medium w-8 text-right"
+                  >40</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                Response to environmental factors
+              </p>
+            </div>
+
+            <!-- Layering -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Canopy Depth</label
+              >
+              <div class="flex items-center gap-3">
+                <input
+                  type="range"
+                  id="layers"
+                  min="1"
+                  max="5"
+                  value="3"
+                  class="w-full"
+                />
+                <span
+                  id="layers-value"
+                  class="text-sm font-medium w-8 text-right"
+                  >3</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                Layered structure and dimension
+              </p>
+            </div>
+
+            <!-- Texture Density -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Texture Density</label
+              >
+              <div class="flex items-center gap-3">
+                <input
+                  type="range"
+                  id="texture"
+                  min="0"
+                  max="100"
+                  value="50"
+                  class="w-full"
+                />
+                <span
+                  id="texture-value"
+                  class="text-sm font-medium w-8 text-right"
+                  >50</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                Fine details within the larger pattern
+              </p>
+            </div>
+
+            <!-- Color Variance -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Tonal Variation</label
+              >
+              <div class="flex items-center gap-3">
+                <input
+                  type="range"
+                  id="color-variance"
+                  min="0"
+                  max="100"
+                  value="30"
+                  class="w-full"
+                />
+                <span
+                  id="color-variance-value"
+                  class="text-sm font-medium w-8 text-right"
+                  >30</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                Subtle shifts in foliage coloration
+              </p>
+            </div>
+
+            <!-- Shadow Intensity -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Shadow Presence</label
+              >
+              <div class="flex items-center gap-3">
+                <input
+                  type="range"
+                  id="shadow"
+                  min="0"
+                  max="100"
+                  value="40"
+                  class="w-full"
+                />
+                <span
+                  id="shadow-value"
+                  class="text-sm font-medium w-8 text-right"
+                  >40</span
+                >
+              </div>
+            </div>
+
+            <!-- Species Selection -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Tree Lineage</label
+              >
+              <select
+                id="species"
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-200 focus:ring-opacity-50 p-2 border"
+              >
+                <option value="oak">Oak (Ancient, Enduring)</option>
+                <option value="maple">Maple (Graceful, Balanced)</option>
+                <option value="pine">Pine (Resilient, Evergreen)</option>
+                <option value="birch">Birch (Pioneer, Adaptive)</option>
+                <option value="willow">Willow (Fluid, Yielding)</option>
+                <option value="mixed">Mixed Heritage</option>
+              </select>
+            </div>
+
+            <!-- Season Selection -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Seasonal Expression</label
+              >
+              <select
+                id="season"
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-200 focus:ring-opacity-50 p-2 border"
+              >
+                <option value="spring">Spring (New Growth)</option>
+                <option value="summer" selected>Summer (Full Foliage)</option>
+                <option value="autumn">Autumn (Transformation)</option>
+                <option value="winter">Winter (Dormant Structure)</option>
+              </select>
+            </div>
+
+            <!-- Base Color -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Primary Palette</label
+              >
+              <div class="grid grid-cols-5 gap-2" id="color-palette">
+                <div
+                  class="color-block active"
+                  style="background-color: #6b8e5b"
+                  data-color="#6b8e5b"
+                ></div>
+                <div
+                  class="color-block"
+                  style="background-color: #8fb977"
+                  data-color="#8fb977"
+                ></div>
+                <div
+                  class="color-block"
+                  style="background-color: #5a704d"
+                  data-color="#5a704d"
+                ></div>
+                <div
+                  class="color-block"
+                  style="background-color: #9ec988"
+                  data-color="#9ec988"
+                ></div>
+                <div
+                  class="color-block"
+                  style="background-color: #748f66"
+                  data-color="#748f66"
+                ></div>
+
+                <div
+                  class="color-block"
+                  style="background-color: #4a5d3e"
+                  data-color="#4a5d3e"
+                ></div>
+                <div
+                  class="color-block"
+                  style="background-color: #a8d49c"
+                  data-color="#a8d49c"
+                ></div>
+                <div
+                  class="color-block"
+                  style="background-color: #3e4f35"
+                  data-color="#3e4f35"
+                ></div>
+                <div
+                  class="color-block"
+                  style="background-color: #b2dfaf"
+                  data-color="#b2dfaf"
+                ></div>
+                <div
+                  class="color-block"
+                  style="background-color: #536846"
+                  data-color="#536846"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Age -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Tree Age</label
+              >
+              <div class="flex items-center gap-3">
+                <input
+                  type="range"
+                  id="age"
+                  min="0"
+                  max="100"
+                  value="60"
+                  class="w-full"
+                />
+                <span id="age-value" class="text-sm font-medium w-8 text-right"
+                  >60</span
+                >
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                Temporal wisdom carried in form
+              </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3">
+              <button
+                id="regenerate"
+                class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors w-full"
+              >
+                Grow New Tree
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="lg:w-2/3">
+          <div
+            class="bg-gray-100 rounded-lg overflow-hidden shadow-md flex justify-center items-center"
+          >
+            <svg id="canvas" width="600" height="600" class="bg-green-50"></svg>
+          </div>
+          <div class="mt-4 text-sm text-gray-600 italic">
+            What appears as a single tree is actually a community of
+            relationships—between roots and soil, branches and light, leaves and
+            air.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Get canvas and set dimensions
+        const svg = d3.select("#canvas");
+        const width = parseInt(svg.attr("width"));
+        const height = parseInt(svg.attr("height"));
+
+        // Control elements
+        const treeSizeSlider = document.getElementById("tree-size");
+        const treeSizeValue = document.getElementById("tree-size-value");
+        const complexitySlider = document.getElementById("complexity");
+        const complexityValue = document.getElementById("complexity-value");
+        const irregularitySlider = document.getElementById("irregularity");
+        const irregularityValue = document.getElementById("irregularity-value");
+        const layersSlider = document.getElementById("layers");
+        const layersValue = document.getElementById("layers-value");
+        const textureSlider = document.getElementById("texture");
+        const textureValue = document.getElementById("texture-value");
+        const colorVarianceSlider = document.getElementById("color-variance");
+        const colorVarianceValue = document.getElementById(
+          "color-variance-value"
+        );
+        const shadowSlider = document.getElementById("shadow");
+        const shadowValue = document.getElementById("shadow-value");
+        const speciesSelect = document.getElementById("species");
+        const seasonSelect = document.getElementById("season");
+        const ageSlider = document.getElementById("age");
+        const ageValue = document.getElementById("age-value");
+        const regenerateBtn = document.getElementById("regenerate");
+        const colorBlocks = document.querySelectorAll(".color-block");
+
+        // Current settings
+        let settings = {
+          treeSize: parseInt(treeSizeSlider.value),
+          complexity: parseInt(complexitySlider.value),
+          irregularity: parseInt(irregularitySlider.value) / 100,
+          layers: parseInt(layersSlider.value),
+          texture: parseInt(textureSlider.value) / 100,
+          colorVariance: parseInt(colorVarianceSlider.value) / 100,
+          shadow: parseInt(shadowSlider.value) / 100,
+          species: speciesSelect.value,
+          season: seasonSelect.value,
+          age: parseInt(ageSlider.value) / 100,
+          baseColor: "#6b8e5b", // Default first color
+        };
+
+        // Update value displays
+        function updateDisplayValues() {
+          treeSizeValue.textContent = settings.treeSize;
+          complexityValue.textContent = settings.complexity;
+          irregularityValue.textContent = Math.round(
+            settings.irregularity * 100
+          );
+          layersValue.textContent = settings.layers;
+          textureValue.textContent = Math.round(settings.texture * 100);
+          colorVarianceValue.textContent = Math.round(
+            settings.colorVariance * 100
+          );
+          shadowValue.textContent = Math.round(settings.shadow * 100);
+          ageValue.textContent = Math.round(settings.age * 100);
+        }
+
+        // Color palette selection
+        colorBlocks.forEach((block) => {
+          block.addEventListener("click", function () {
+            // Remove active class from all blocks
+            colorBlocks.forEach((b) => b.classList.remove("active"));
+
+            // Add active class to clicked block
+            this.classList.add("active");
+
+            // Set the selected color
+            settings.baseColor = this.getAttribute("data-color");
+
+            // Regenerate the tree with the new color
+            generateTree();
+          });
+        });
+
+        // Input change handlers
+        treeSizeSlider.addEventListener("input", function () {
+          settings.treeSize = parseInt(this.value);
+          updateDisplayValues();
+        });
+
+        complexitySlider.addEventListener("input", function () {
+          settings.complexity = parseInt(this.value);
+          updateDisplayValues();
+        });
+
+        irregularitySlider.addEventListener("input", function () {
+          settings.irregularity = parseInt(this.value) / 100;
+          updateDisplayValues();
+        });
+
+        layersSlider.addEventListener("input", function () {
+          settings.layers = parseInt(this.value);
+          updateDisplayValues();
+        });
+
+        textureSlider.addEventListener("input", function () {
+          settings.texture = parseInt(this.value) / 100;
+          updateDisplayValues();
+        });
+
+        colorVarianceSlider.addEventListener("input", function () {
+          settings.colorVariance = parseInt(this.value) / 100;
+          updateDisplayValues();
+        });
+
+        shadowSlider.addEventListener("input", function () {
+          settings.shadow = parseInt(this.value) / 100;
+          updateDisplayValues();
+        });
+
+        speciesSelect.addEventListener("change", function () {
+          settings.species = this.value;
+          generateTree();
+        });
+
+        seasonSelect.addEventListener("change", function () {
+          settings.season = this.value;
+          generateTree();
+        });
+
+        ageSlider.addEventListener("input", function () {
+          settings.age = parseInt(this.value) / 100;
+          updateDisplayValues();
+        });
+
+        // Species-specific configurations
+        const speciesConfigs = {
+          oak: {
+            baseComplexity: 12,
+            irregularityMultiplier: 1.0,
+            layerDensity: 1.2,
+            shapeFunction: (t, size) => size * (0.85 + Math.sin(t * 2) * 0.15),
+            trunkSize: 0.2,
+            texturePattern: "clustered",
+          },
+          maple: {
+            baseComplexity: 10,
+            irregularityMultiplier: 0.8,
+            layerDensity: 1.0,
+            shapeFunction: (t, size) => size * (0.7 + Math.sin(t * 4) * 0.3),
+            trunkSize: 0.15,
+            texturePattern: "radial",
+          },
+          pine: {
+            baseComplexity: 18,
+            irregularityMultiplier: 0.5,
+            layerDensity: 1.4,
+            shapeFunction: (t, size) => size * (0.6 + Math.cos(t * 5) * 0.4),
+            trunkSize: 0.12,
+            texturePattern: "needled",
+          },
+          birch: {
+            baseComplexity: 8,
+            irregularityMultiplier: 1.2,
+            layerDensity: 0.8,
+            shapeFunction: (t, size) => size * (0.75 + Math.sin(t * 6) * 0.25),
+            trunkSize: 0.1,
+            texturePattern: "airy",
+          },
+          willow: {
+            baseComplexity: 14,
+            irregularityMultiplier: 1.5,
+            layerDensity: 0.9,
+            shapeFunction: (t, size) => size * (0.65 + Math.cos(t * 3) * 0.35),
+            trunkSize: 0.18,
+            texturePattern: "flowing",
+          },
+          mixed: {
+            baseComplexity: 15,
+            irregularityMultiplier: 1.3,
+            layerDensity: 1.1,
+            shapeFunction: (t, size) => size * (0.7 + Math.sin(t * 8) * 0.3),
+            trunkSize: 0.16,
+            texturePattern: "diverse",
+          },
+        };
+
+        // Seasonal configurations
+        const seasonConfigs = {
+          spring: {
+            colorBrightness: 1.2,
+            colorSaturation: 1.1,
+            foliageDensity: 0.8,
+            textureMultiplier: 0.7,
+          },
+          summer: {
+            colorBrightness: 1.0,
+            colorSaturation: 1.0,
+            foliageDensity: 1.0,
+            textureMultiplier: 1.0,
+          },
+          autumn: {
+            colorBrightness: 0.9,
+            colorSaturation: 0.8,
+            foliageDensity: 0.9,
+            textureMultiplier: 0.8,
+          },
+          winter: {
+            colorBrightness: 0.7,
+            colorSaturation: 0.5,
+            foliageDensity: 0.6,
+            textureMultiplier: 0.5,
+          },
+        };
+
+        // Seasonal color adjustments
+        function applySeasonalColor(baseColor, season) {
+          const color = d3.color(baseColor);
+          const seasonConfig = seasonConfigs[season];
+
+          // Adjust brightness
+          color.r = Math.min(
+            255,
+            Math.floor(color.r * seasonConfig.colorBrightness)
+          );
+          color.g = Math.min(
+            255,
+            Math.floor(color.g * seasonConfig.colorBrightness)
+          );
+          color.b = Math.min(
+            255,
+            Math.floor(color.b * seasonConfig.colorBrightness)
+          );
+
+          // Adjust saturation (crude approximation)
+          if (season === "autumn") {
+            // Shift toward red/orange
+            color.r = Math.min(255, Math.floor(color.r * 1.3));
+            color.g = Math.min(255, Math.floor(color.g * 0.9));
+            color.b = Math.min(255, Math.floor(color.b * 0.7));
+          } else if (season === "winter") {
+            // Desaturate toward gray
+            const avg = (color.r + color.g + color.b) / 3;
+            color.r = Math.floor(color.r * 0.5 + avg * 0.5);
+            color.g = Math.floor(color.g * 0.5 + avg * 0.5);
+            color.b = Math.floor(color.b * 0.5 + avg * 0.5);
+          } else if (season === "spring") {
+            // Shift toward fresh green
+            color.r = Math.floor(color.r * 0.8);
+            color.g = Math.min(255, Math.floor(color.g * 1.2));
+            color.b = Math.floor(color.b * 0.9);
+          }
+
+          return color;
+        }
+
+        // Generate random points within a circle for texture
+        function getRandomPointsInCircle(centerX, centerY, radius, count) {
+          const points = [];
+          for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * radius;
+            const x = centerX + Math.cos(angle) * distance;
+            const y = centerY + Math.sin(angle) * distance;
+            points.push({ x, y });
+          }
+          return points;
+        }
+
+        // Create a noise-like texture for natural variation
+        function createNoiseTexture(group, radius, color, opacity, count) {
+          const points = getRandomPointsInCircle(0, 0, radius, count);
+
+          points.forEach((point) => {
+            const dotSize = radius * (0.01 + Math.random() * 0.04);
+            group
+              .append("circle")
+              .attr("cx", point.x)
+              .attr("cy", point.y)
+              .attr("r", dotSize)
+              .attr("fill", color)
+              .attr("fill-opacity", opacity * (0.3 + Math.random() * 0.7));
+          });
+        }
+
+        // Add detailed bark texture
+        function createBarkTexture(group, trunkSize, color) {
+          // Add growth rings
+          const ringCount = 4 + Math.floor(Math.random() * 5);
+          for (let i = 0; i < ringCount; i++) {
+            const ringRadius = trunkSize * (0.3 + (i / ringCount) * 0.7);
+            group
+              .append("circle")
+              .attr("r", ringRadius)
+              .attr("fill", "none")
+              .attr("stroke", d3.color(color).darker(0.5 + Math.random() * 0.5))
+              .attr("stroke-width", 0.5 + Math.random() * 1)
+              .attr("stroke-opacity", 0.3 + Math.random() * 0.3);
+          }
+
+          // Add bark texture elements
+          const barkElements = 12 + Math.floor(Math.random() * 8);
+          for (let i = 0; i < barkElements; i++) {
+            const angle = (i / barkElements) * Math.PI * 2;
+            const offsetX = Math.cos(angle) * (trunkSize * 0.6 * Math.random());
+            const offsetY = Math.sin(angle) * (trunkSize * 0.6 * Math.random());
+            const barkWidth = trunkSize * (0.05 + Math.random() * 0.15);
+            const barkHeight = trunkSize * (0.2 + Math.random() * 0.3);
+
+            group
+              .append("ellipse")
+              .attr("cx", offsetX)
+              .attr("cy", offsetY)
+              .attr("rx", barkWidth)
+              .attr("ry", barkHeight)
+              .attr("transform", `rotate(${Math.random() * 360})`)
+              .attr("fill", d3.color(color).darker(Math.random() * 1.5))
+              .attr("fill-opacity", 0.4 + Math.random() * 0.4);
+          }
+        }
+
+        // Create the detailed texture elements
+        function createCanopyTexture(
+          group,
+          baseSize,
+          baseColor,
+          species,
+          texture,
+          season
+        ) {
+          const speciesConfig = speciesConfigs[species];
+          const seasonConfig = seasonConfigs[season];
+          const texturePattern = speciesConfig.texturePattern;
+
+          // Determine texture element count based on settings and species
+          const textureElementCount = Math.floor(
+            40 *
+              texture *
+              seasonConfig.textureMultiplier *
+              (0.8 + settings.complexity / 20)
+          );
+
+          // Different texture patterns based on species
+          if (texturePattern === "needled") {
+            // Pine-like needle clusters
+            const clusterCount = Math.floor(textureElementCount / 5);
+            for (let i = 0; i < clusterCount; i++) {
+              const angle = Math.random() * Math.PI * 2;
+              const distance = baseSize * Math.random() * 0.85;
+
+              const x = Math.cos(angle) * distance;
+              const y = Math.sin(angle) * distance;
+
+              // Create a needle cluster
+              const needleGroup = group
+                .append("g")
+                .attr("transform", `translate(${x}, ${y})`);
+
+              const needleCount = 4 + Math.floor(Math.random() * 5);
+              for (let j = 0; j < needleCount; j++) {
+                const needleAngle = (j / needleCount) * Math.PI * 2;
+                const needleLength = baseSize * (0.02 + Math.random() * 0.04);
+
+                const needleColor = d3.color(baseColor);
+                needleColor.r = Math.max(
+                  0,
+                  Math.min(
+                    255,
+                    Math.floor(needleColor.r * (0.9 + Math.random() * 0.2))
+                  )
+                );
+                needleColor.g = Math.max(
+                  0,
+                  Math.min(
+                    255,
+                    Math.floor(needleColor.g * (0.9 + Math.random() * 0.2))
+                  )
+                );
+                needleColor.b = Math.max(
+                  0,
+                  Math.min(
+                    255,
+                    Math.floor(needleColor.b * (0.9 + Math.random() * 0.2))
+                  )
+                );
+
+                needleGroup
+                  .append("line")
+                  .attr("x1", 0)
+                  .attr("y1", 0)
+                  .attr("x2", Math.cos(needleAngle) * needleLength)
+                  .attr("y2", Math.sin(needleAngle) * needleLength)
+                  .attr("stroke", needleColor)
+                  .attr("stroke-width", 1 + Math.random())
+                  .attr("stroke-opacity", 0.6 + Math.random() * 0.4);
+              }
+            }
+          } else if (texturePattern === "flowing") {
+            // Willow-like drooping patterns
+            const branchCount = Math.floor(textureElementCount / 4);
+            for (let i = 0; i < branchCount; i++) {
+              const angle = Math.random() * Math.PI * 2;
+              const innerDistance = baseSize * 0.3 * Math.random();
+              const outerDistance = baseSize * (0.6 + Math.random() * 0.3);
+
+              const x1 = Math.cos(angle) * innerDistance;
+              const y1 = Math.sin(angle) * innerDistance;
+              const x2 = Math.cos(angle) * outerDistance;
+              const y2 = Math.sin(angle) * outerDistance;
+
+              // Control points for curve
+              const ctrl1x = x1 + (x2 - x1) * 0.3;
+              const ctrl1y = y1 + (y2 - y1) * 0.3;
+              const ctrl2x = x1 + (x2 - x1) * 0.7;
+              const ctrl2y =
+                y1 + (y2 - y1) * 0.7 + baseSize * 0.1 * Math.random();
+
+              const branchColor = d3.color(baseColor);
+              branchColor.r = Math.max(
+                0,
+                Math.min(
+                  255,
+                  Math.floor(branchColor.r * (0.9 + Math.random() * 0.2))
+                )
+              );
+              branchColor.g = Math.max(
+                0,
+                Math.min(
+                  255,
+                  Math.floor(branchColor.g * (0.9 + Math.random() * 0.2))
+                )
+              );
+              branchColor.b = Math.max(
+                0,
+                Math.min(
+                  255,
+                  Math.floor(branchColor.b * (0.9 + Math.random() * 0.2))
+                )
+              );
+
+              // Draw curved path
+              group
+                .append("path")
+                .attr(
+                  "d",
+                  `M${x1},${y1} C${ctrl1x},${ctrl1y} ${ctrl2x},${ctrl2y} ${x2},${y2}`
+                )
+                .attr("fill", "none")
+                .attr("stroke", branchColor)
+                .attr("stroke-width", 1 + Math.random() * 2)
+                .attr("stroke-opacity", 0.4 + Math.random() * 0.3);
+
+              // Add small leaves along the branch
+              const leafCount = 2 + Math.floor(Math.random() * 4);
+              for (let j = 0; j < leafCount; j++) {
+                const t = 0.5 + (j / leafCount) * 0.5; // Position along curve, biased toward end
+                const leafX = bezierPoint(x1, ctrl1x, ctrl2x, x2, t);
+                const leafY = bezierPoint(y1, ctrl1y, ctrl2y, y2, t);
+
+                const leafSize = baseSize * (0.01 + Math.random() * 0.02);
+
+                group.append("circle").attr("cx", leafX).attr("cy", leafY);
+                const leafColor = d3
+                  .color(baseColor)
+                  .brighter(Math.random() * 0.3);
+
+                group
+                  .append("ellipse")
+                  .attr("cx", leafX)
+                  .attr("cy", leafY)
+                  .attr("rx", leafSize)
+                  .attr("ry", leafSize * 1.5)
+                  .attr(
+                    "transform",
+                    `rotate(${Math.random() * 360}, ${leafX}, ${leafY})`
+                  )
+                  .attr("fill", leafColor)
+                  .attr("fill-opacity", 0.6 + Math.random() * 0.4);
+              }
+            }
+          } else if (texturePattern === "airy") {
+            // Birch-like light, sparse pattern
+            const leafCount = textureElementCount;
+            for (let i = 0; i < leafCount; i++) {
+              const angle = Math.random() * Math.PI * 2;
+              const distance = baseSize * (0.2 + Math.random() * 0.75);
+
+              const x = Math.cos(angle) * distance;
+              const y = Math.sin(angle) * distance;
+
+              const leafSize = baseSize * (0.01 + Math.random() * 0.025);
+
+              // Create varying leaf colors
+              const leafColor = d3.color(baseColor);
+              const brightenFactor = 0.8 + Math.random() * 0.4;
+              leafColor.r = Math.min(
+                255,
+                Math.floor(leafColor.r * brightenFactor)
+              );
+              leafColor.g = Math.min(
+                255,
+                Math.floor(leafColor.g * brightenFactor)
+              );
+              leafColor.b = Math.min(
+                255,
+                Math.floor(leafColor.b * brightenFactor)
+              );
+
+              // Small circular leaves
+              group
+                .append("circle")
+                .attr("cx", x)
+                .attr("cy", y)
+                .attr("r", leafSize)
+                .attr("fill", leafColor)
+                .attr("fill-opacity", 0.5 + Math.random() * 0.3);
+            }
+          } else if (texturePattern === "radial") {
+            // Maple-like radial pattern
+            const sectionCount = 5 + Math.floor(Math.random() * 3);
+            const pointsPerSection = Math.floor(
+              textureElementCount / sectionCount
+            );
+
+            for (let i = 0; i < sectionCount; i++) {
+              const sectionAngle = (i / sectionCount) * Math.PI * 2;
+              const sectionWidth = (Math.PI * 2) / sectionCount;
+
+              for (let j = 0; j < pointsPerSection; j++) {
+                const distance =
+                  baseSize * (0.1 + (j / pointsPerSection) * 0.85);
+                const angleVariation =
+                  (Math.random() - 0.5) * sectionWidth * 0.5;
+                const angle = sectionAngle + angleVariation;
+
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+
+                const dotSize =
+                  baseSize * (0.005 + (1 - j / pointsPerSection) * 0.02);
+
+                // Color variation along radial lines
+                const dotColor = d3.color(baseColor);
+                const colorShift = (j / pointsPerSection) * 0.4;
+                dotColor.r = Math.max(
+                  0,
+                  Math.min(255, Math.floor(dotColor.r * (1 + colorShift)))
+                );
+                dotColor.g = Math.max(
+                  0,
+                  Math.min(255, Math.floor(dotColor.g * (1 + colorShift * 0.7)))
+                );
+                dotColor.b = Math.max(
+                  0,
+                  Math.min(255, Math.floor(dotColor.b * (1 + colorShift * 0.5)))
+                );
+
+                group
+                  .append("circle")
+                  .attr("cx", x)
+                  .attr("cy", y)
+                  .attr("r", dotSize)
+                  .attr("fill", dotColor)
+                  .attr("fill-opacity", 0.4 + Math.random() * 0.4);
+              }
+            }
+          } else if (texturePattern === "clustered") {
+            // Oak-like cluster pattern
+            const clusterCount = Math.floor(textureElementCount / 10);
+
+            for (let i = 0; i < clusterCount; i++) {
+              const angle = Math.random() * Math.PI * 2;
+              const distance = baseSize * Math.random() * 0.85;
+
+              const x = Math.cos(angle) * distance;
+              const y = Math.sin(angle) * distance;
+
+              const clusterSize = baseSize * (0.05 + Math.random() * 0.1);
+              const pointsInCluster = 3 + Math.floor(Math.random() * 7);
+
+              // Create cluster of leaves
+              for (let j = 0; j < pointsInCluster; j++) {
+                const leafAngle = Math.random() * Math.PI * 2;
+                const leafDistance = clusterSize * Math.random() * 0.8;
+
+                const leafX = x + Math.cos(leafAngle) * leafDistance;
+                const leafY = y + Math.sin(leafAngle) * leafDistance;
+
+                const leafSize = baseSize * (0.01 + Math.random() * 0.02);
+
+                // Create oak leaf color
+                const leafColor = d3.color(baseColor);
+                const colorVariation = (Math.random() - 0.5) * 0.3;
+                leafColor.r = Math.max(
+                  0,
+                  Math.min(255, Math.floor(leafColor.r * (1 + colorVariation)))
+                );
+                leafColor.g = Math.max(
+                  0,
+                  Math.min(255, Math.floor(leafColor.g * (1 + colorVariation)))
+                );
+                leafColor.b = Math.max(
+                  0,
+                  Math.min(255, Math.floor(leafColor.b * (1 + colorVariation)))
+                );
+
+                group
+                  .append("circle")
+                  .attr("cx", leafX)
+                  .attr("cy", leafY)
+                  .attr("r", leafSize)
+                  .attr("fill", leafColor)
+                  .attr("fill-opacity", 0.6 + Math.random() * 0.4);
+              }
+            }
+          } else if (texturePattern === "diverse") {
+            // Mixed species pattern with diverse elements
+            const totalElements = textureElementCount;
+
+            // Create varied texture elements
+            for (let i = 0; i < totalElements; i++) {
+              const angle = Math.random() * Math.PI * 2;
+              const distance = baseSize * (0.1 + Math.random() * 0.85);
+
+              const x = Math.cos(angle) * distance;
+              const y = Math.sin(angle) * distance;
+
+              // Randomly select element type
+              const elementType = Math.floor(Math.random() * 4);
+
+              // Color with more variation
+              const elementColor = d3.color(baseColor);
+              const colorVariation = (Math.random() - 0.5) * 0.5;
+              elementColor.r = Math.max(
+                0,
+                Math.min(255, Math.floor(elementColor.r * (1 + colorVariation)))
+              );
+              elementColor.g = Math.max(
+                0,
+                Math.min(255, Math.floor(elementColor.g * (1 + colorVariation)))
+              );
+              elementColor.b = Math.max(
+                0,
+                Math.min(255, Math.floor(elementColor.b * (1 + colorVariation)))
+              );
+
+              if (elementType === 0) {
+                // Small circular leaf
+                const size = baseSize * (0.01 + Math.random() * 0.02);
+                group
+                  .append("circle")
+                  .attr("cx", x)
+                  .attr("cy", y)
+                  .attr("r", size)
+                  .attr("fill", elementColor)
+                  .attr("fill-opacity", 0.5 + Math.random() * 0.5);
+              } else if (elementType === 1) {
+                // Elliptical leaf
+                const width = baseSize * (0.01 + Math.random() * 0.015);
+                const height = width * (1.2 + Math.random() * 0.8);
+                const rotation = Math.random() * 360;
+
+                group
+                  .append("ellipse")
+                  .attr("cx", x)
+                  .attr("cy", y)
+                  .attr("rx", width)
+                  .attr("ry", height)
+                  .attr("transform", `rotate(${rotation}, ${x}, ${y})`)
+                  .attr("fill", elementColor)
+                  .attr("fill-opacity", 0.5 + Math.random() * 0.5);
+              } else if (elementType === 2) {
+                // Small branch segment
+                const angle2 = angle + (Math.random() - 0.5) * Math.PI * 0.5;
+                const length = baseSize * (0.02 + Math.random() * 0.03);
+                const x2 = x + Math.cos(angle2) * length;
+                const y2 = y + Math.sin(angle2) * length;
+
+                group
+                  .append("line")
+                  .attr("x1", x)
+                  .attr("y1", y)
+                  .attr("x2", x2)
+                  .attr("y2", y2)
+                  .attr("stroke", elementColor.darker(0.5))
+                  .attr("stroke-width", 1 + Math.random())
+                  .attr("stroke-opacity", 0.5 + Math.random() * 0.3);
+              } else {
+                // Small composite element (tiny cluster)
+                const clusterSize = baseSize * 0.03;
+                const dotCount = 2 + Math.floor(Math.random() * 3);
+
+                for (let j = 0; j < dotCount; j++) {
+                  const dotAngle = Math.random() * Math.PI * 2;
+                  const dotDistance = clusterSize * Math.random();
+                  const dotX = x + Math.cos(dotAngle) * dotDistance;
+                  const dotY = y + Math.sin(dotAngle) * dotDistance;
+                  const dotSize = baseSize * 0.006;
+
+                  group
+                    .append("circle")
+                    .attr("cx", dotX)
+                    .attr("cy", dotY)
+                    .attr("r", dotSize)
+                    .attr("fill", elementColor)
+                    .attr("fill-opacity", 0.5 + Math.random() * 0.5);
+                }
+              }
+            }
+          }
+        }
+
+        // Helper function for bezier curve point calculation
+        function bezierPoint(p0, p1, p2, p3, t) {
+          return (
+            Math.pow(1 - t, 3) * p0 +
+            3 * Math.pow(1 - t, 2) * t * p1 +
+            3 * (1 - t) * Math.pow(t, 2) * p2 +
+            Math.pow(t, 3) * p3
+          );
+        }
+
+        // Function to create the detailed tree
+        function generateTree() {
+          // Clear previous tree
+          svg.selectAll("*").remove();
+
+          // Center position
+          const centerX = width / 2;
+          const centerY = height / 2;
+
+          // Get species and season configuration
+          const speciesConfig = speciesConfigs[settings.species];
+          const seasonConfig = seasonConfigs[settings.season];
+
+          // Apply seasonal color adjustment
+          const seasonalColor = applySeasonalColor(
+            settings.baseColor,
+            settings.season
+          );
+
+          // Group for the entire tree
+          const treeGroup = svg
+            .append("g")
+            .attr("class", "tree")
+            .attr("transform", `translate(${centerX}, ${centerY})`);
+
+          // Add shadow first (if enabled) so it appears behind the tree
+          if (settings.shadow > 0) {
+            // Create shadow gradient
+            const shadowGradient = svg
+              .append("defs")
+              .append("radialGradient")
+              .attr("id", "shadow-gradient")
+              .attr("cx", "50%")
+              .attr("cy", "50%")
+              .attr("r", "50%");
+
+            shadowGradient
+              .append("stop")
+              .attr("offset", "0%")
+              .attr("stop-color", "#000")
+              .attr("stop-opacity", 0.25 * settings.shadow);
+
+            shadowGradient
+              .append("stop")
+              .attr("offset", "70%")
+              .attr("stop-color", "#000")
+              .attr("stop-opacity", 0.12 * settings.shadow);
+
+            shadowGradient
+              .append("stop")
+              .attr("offset", "100%")
+              .attr("stop-color", "#000")
+              .attr("stop-opacity", 0);
+
+            // Shadow offset based on species (suggesting light direction)
+            const shadowOffsetX = settings.treeSize * 0.03;
+            const shadowOffsetY = settings.treeSize * 0.03;
+
+            // Shadow size slightly larger than tree
+            const shadowSize = settings.treeSize * 1.1;
+
+            // Add the shadow
+            treeGroup
+              .append("circle")
+              .attr("class", "tree-shadow")
+              .attr("cx", shadowOffsetX)
+              .attr("cy", shadowOffsetY)
+              .attr("r", shadowSize)
+              .attr("fill", "url(#shadow-gradient)");
+          }
+
+          // Create canopy layers from back to front
+          for (let layer = 0; layer < settings.layers; layer++) {
+            // Layer size increases slightly with each layer
+            const layerSize =
+              settings.treeSize * (0.75 + (layer / settings.layers) * 0.25);
+            const layerOpacity = 0.8 + (layer / settings.layers) * 0.2;
+
+            // Layer color (deeper layers are slightly darker)
+            const layerColor = d3.color(seasonalColor);
+            const layerDarkness =
+              (0.15 * (settings.layers - layer - 1)) / settings.layers;
+            layerColor.r = Math.max(
+              0,
+              Math.floor(layerColor.r * (1 - layerDarkness))
+            );
+            layerColor.g = Math.max(
+              0,
+              Math.floor(layerColor.g * (1 - layerDarkness))
+            );
+            layerColor.b = Math.max(
+              0,
+              Math.floor(layerColor.b * (1 - layerDarkness))
+            );
+
+            // Age affects the effective complexity
+            const effectiveComplexity = Math.max(
+              3,
+              Math.floor(
+                settings.complexity *
+                  (0.6 + settings.age * 0.8) *
+                  (speciesConfig.baseComplexity / 10)
+              )
+            );
+
+            // Create layer group
+            const layerGroup = treeGroup
+              .append("g")
+              .attr("class", `canopy-layer-${layer}`);
+
+            // Create canopy outline points with organic irregularity
+            const canopyPoints = [];
+            for (let i = 0; i < effectiveComplexity; i++) {
+              const angle = (i / effectiveComplexity) * Math.PI * 2;
+
+              // Base radius from species shape function
+              const baseRadius = speciesConfig.shapeFunction(angle, layerSize);
+
+              // Apply irregularity based on settings and species
+              const irregularityFactor =
+                settings.irregularity * speciesConfig.irregularityMultiplier;
+              const randomVariation =
+                1 + irregularityFactor * (Math.random() - 0.5) * 2;
+
+              // Age affects the profile - older trees have more character
+              const ageVariation =
+                1 + (settings.age - 0.5) * 0.3 * Math.sin(angle * 3);
+
+              // Season affects fullness
+              const seasonFactor = seasonConfig.foliageDensity;
+
+              // Calculate final radius with all factors
+              const radius =
+                baseRadius * randomVariation * ageVariation * seasonFactor;
+
+              // Calculate point coordinates
+              const x = Math.cos(angle) * radius;
+              const y = Math.sin(angle) * radius;
+
+              canopyPoints.push([x, y]);
+            }
+
+            // Close the loop
+            canopyPoints.push(canopyPoints[0]);
+
+            // Create smooth curve generator
+            const lineGenerator = d3
+              .line()
+              .x((d) => d[0])
+              .y((d) => d[1])
+              .curve(d3.curveCatmullRomClosed.alpha(0.5));
+
+            // Draw the canopy outline
+            layerGroup
+              .append("path")
+              .attr("d", lineGenerator(canopyPoints))
+              .attr("fill", layerColor)
+              .attr("fill-opacity", layerOpacity)
+              .attr("stroke", d3.color(layerColor).darker(0.3))
+              .attr("stroke-width", 1.2)
+              .attr("stroke-opacity", 0.6);
+
+            // Add texture details to this layer
+            createCanopyTexture(
+              layerGroup,
+              layerSize,
+              layerColor,
+              settings.species,
+              settings.texture,
+              settings.season
+            );
+
+            // Add subtle lighting/shadow effects
+            if (settings.shadow > 0.2) {
+              // Inner shadow areas for depth
+              const shadowCount = Math.floor(3 + settings.complexity * 0.3);
+              for (let i = 0; i < shadowCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = layerSize * 0.4 * Math.random();
+
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+
+                const shadowSize = layerSize * (0.1 + Math.random() * 0.2);
+
+                layerGroup
+                  .append("circle")
+                  .attr("cx", x)
+                  .attr("cy", y)
+                  .attr("r", shadowSize)
+                  .attr("fill", "#000")
+                  .attr(
+                    "fill-opacity",
+                    0.05 + Math.random() * 0.1 * settings.shadow
+                  );
+              }
+
+              // Highlight areas
+              const highlightCount = Math.floor(2 + settings.complexity * 0.2);
+              for (let i = 0; i < highlightCount; i++) {
+                const angle = Math.random() * Math.PI; // Only on one side (light source)
+                const distance = layerSize * 0.5 * Math.random();
+
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+
+                const highlightSize = layerSize * (0.08 + Math.random() * 0.15);
+
+                layerGroup
+                  .append("circle")
+                  .attr("cx", x)
+                  .attr("cy", y)
+                  .attr("r", highlightSize)
+                  .attr("fill", "#fff")
+                  .attr(
+                    "fill-opacity",
+                    0.04 + Math.random() * 0.08 * settings.shadow
+                  );
+              }
+            }
+          }
+
+          // Calculate trunk size based on species and age
+          const trunkSize =
+            settings.treeSize *
+            speciesConfig.trunkSize *
+            (0.7 + settings.age * 0.6);
+
+          // Create trunk group
+          const trunkGroup = treeGroup.append("g").attr("class", "trunk");
+
+          // Create trunk base
+          trunkGroup
+            .append("circle")
+            .attr("r", trunkSize)
+            .attr("fill", "#5d4037")
+            .attr("fill-opacity", 0.8);
+
+          // Add bark texture
+          createBarkTexture(trunkGroup, trunkSize, "#5d4037");
+
+          // Season-specific trunk details
+          if (settings.season === "winter" && settings.species !== "pine") {
+            // For deciduous trees in winter, add branch structure
+            const branchCount = Math.floor(6 + settings.complexity * 0.5);
+
+            for (let i = 0; i < branchCount; i++) {
+              const angle = (i / branchCount) * Math.PI * 2;
+              const mainLength =
+                settings.treeSize * (0.4 + Math.random() * 0.4);
+
+              // Main branch
+              const branchX = Math.cos(angle) * trunkSize * 0.7;
+              const branchY = Math.sin(angle) * trunkSize * 0.7;
+              const endX = Math.cos(angle) * mainLength;
+              const endY = Math.sin(angle) * mainLength;
+
+              // Control points for curve
+              const ctrl1x = branchX + (endX - branchX) * 0.3;
+              const ctrl1y = branchY + (endY - branchY) * 0.3;
+              const ctrl2x = branchX + (endX - branchX) * 0.7;
+              const ctrl2y = branchY + (endY - branchY) * 0.7;
+
+              // Draw main branch
+              trunkGroup
+                .append("path")
+                .attr(
+                  "d",
+                  `M${branchX},${branchY} C${ctrl1x},${ctrl1y} ${ctrl2x},${ctrl2y} ${endX},${endY}`
+                )
+                .attr("fill", "none")
+                .attr("stroke", "#5d4037")
+                .attr(
+                  "stroke-width",
+                  trunkSize * 0.2 * (1 - (i / branchCount) * 0.5)
+                )
+                .attr("stroke-opacity", 0.7);
+
+              // Add some smaller branches
+              const subBranchCount = 1 + Math.floor(Math.random() * 3);
+              for (let j = 0; j < subBranchCount; j++) {
+                const subT = 0.3 + Math.random() * 0.6; // Position along main branch
+                const subStartX = bezierPoint(
+                  branchX,
+                  ctrl1x,
+                  ctrl2x,
+                  endX,
+                  subT
+                );
+                const subStartY = bezierPoint(
+                  branchY,
+                  ctrl1y,
+                  ctrl2y,
+                  endY,
+                  subT
+                );
+
+                const subAngle = angle + (Math.random() - 0.5) * Math.PI * 0.5;
+                const subLength = mainLength * (0.3 + Math.random() * 0.3);
+                const subEndX = subStartX + Math.cos(subAngle) * subLength;
+                const subEndY = subStartY + Math.sin(subAngle) * subLength;
+
+                trunkGroup
+                  .append("line")
+                  .attr("x1", subStartX)
+                  .attr("y1", subStartY)
+                  .attr("x2", subEndX)
+                  .attr("y2", subEndY)
+                  .attr("stroke", "#5d4037")
+                  .attr("stroke-width", trunkSize * 0.1 * (1 - subT * 0.5))
+                  .attr("stroke-opacity", 0.6);
+              }
+            }
+          }
+
+          // If it's autumn, add some falling leaves
+          if (settings.season === "autumn" && settings.species !== "pine") {
+            const fallingLeafCount = Math.floor(5 + settings.treeSize / 10);
+
+            for (let i = 0; i < fallingLeafCount; i++) {
+              const angle = Math.random() * Math.PI * 2;
+              const distance = settings.treeSize * (0.5 + Math.random() * 0.7);
+
+              const x = Math.cos(angle) * distance;
+              const y = Math.sin(angle) * distance;
+
+              const leafSize =
+                settings.treeSize * (0.01 + Math.random() * 0.02);
+
+              // Autumn leaf colors
+              const autumnColors = [
+                "#e67e22",
+                "#d35400",
+                "#c0392b",
+                "#e74c3c",
+                "#f39c12",
+              ];
+              const leafColor =
+                autumnColors[Math.floor(Math.random() * autumnColors.length)];
+
+              treeGroup
+                .append("circle")
+                .attr("cx", x)
+                .attr("cy", y)
+                .attr("r", leafSize)
+                .attr("fill", leafColor)
+                .attr("fill-opacity", 0.7 + Math.random() * 0.3);
+            }
+          }
+
+          // If it's spring, add some flower buds for appropriate species
+          if (
+            settings.season === "spring" &&
+            (settings.species === "maple" ||
+              settings.species === "birch" ||
+              settings.species === "mixed")
+          ) {
+            const flowerCount = Math.floor(
+              (settings.treeSize / 10) * settings.age
+            );
+
+            for (let i = 0; i < flowerCount; i++) {
+              const angle = Math.random() * Math.PI * 2;
+              const distance = settings.treeSize * (0.5 + Math.random() * 0.3);
+
+              const x = Math.cos(angle) * distance;
+              const y = Math.sin(angle) * distance;
+
+              const flowerSize =
+                settings.treeSize * (0.01 + Math.random() * 0.015);
+
+              // Spring flower colors
+              const flowerColors = [
+                "#f8c8dc",
+                "#ffafcc",
+                "#ffc0cb",
+                "#fbf8cc",
+                "#fff",
+              ];
+              const flowerColor =
+                flowerColors[Math.floor(Math.random() * flowerColors.length)];
+
+              treeGroup
+                .append("circle")
+                .attr("cx", x)
+                .attr("cy", y)
+                .attr("r", flowerSize)
+                .attr("fill", flowerColor)
+                .attr("fill-opacity", 0.8 + Math.random() * 0.2);
+            }
+          }
+        }
+
+        // Regrow button
+        regenerateBtn.addEventListener("click", generateTree);
+
+        // Input handle delayers for smooth interaction
+        treeSizeSlider.addEventListener("change", generateTree);
+        complexitySlider.addEventListener("change", generateTree);
+        irregularitySlider.addEventListener("change", generateTree);
+        layersSlider.addEventListener("change", generateTree);
+        textureSlider.addEventListener("change", generateTree);
+        colorVarianceSlider.addEventListener("change", generateTree);
+        shadowSlider.addEventListener("change", generateTree);
+        ageSlider.addEventListener("change", generateTree);
+
+        // Initial generation
+        updateDisplayValues();
+        generateTree();
+      });
+    </script>
+  </body>
+</html>
