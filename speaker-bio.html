@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monica Rothgery - Keynote Speaker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "speaker-purple": "#663272",
+              "speaker-orange": "#D68B29",
+              "speaker-bg": "#f8f5f1",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .bio-container {
+        position: relative;
+      }
+      .bio-content.collapsed {
+        max-height: 4.5rem; /* Approximately 3 lines */
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body class="bg-speaker-bg font-sans pt-32">
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+      <div class="md:flex bg-speaker-bg items-center">
+        <!-- Image Container - Takes full width on mobile, about 1/3 on medium screens -->
+
+        <img
+          src="https://crtraweb.org/resources/conference-speaker-image/monica-rothgery.png"
+          alt="Monica Rothgery"
+          class="rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-xl rounded-bl-xl md:w-1/2 lg:w-1/3 aspect-square w-full h-full object-cover"
+        />
+
+        <!-- Content Container -->
+        <div class="md:w-2/3 lg:w-2/3 md:pl-8 pt-6 md:pt-0">
+          <!-- Badge -->
+          <div
+            class="inline-block bg-speaker-orange text-white px-3 py-1 mb-4 font-semibold"
+          >
+            Keynote Speaker
+          </div>
+
+          <!-- Name -->
+          <h1 class="text-4xl md:text-5xl font-bold text-speaker-purple mb-2">
+            MONICA ROTHGERY
+          </h1>
+
+          <!-- Subtitle -->
+          <h2 class="text-xl text-gray-700 mb-6">Author and Keynote Speaker</h2>
+        </div>
+      </div>
+      <div class="my-8">
+        <div class="bio-container">
+          <div class="bio-content collapsed">
+            <p class="mb-4">
+              From managing shifts at Taco Bell to making history as the first
+              female Chief Operations Officer of KFC in the U.S., Monica has
+              spent over 30 years in the restaurant industry, growing and
+              inspiring those around her. She proudly became the first LGBTQ
+              leader to ascend to the C-suite at Yum! Brands, one of the world's
+              largest restaurant companies.
+            </p>
+            <p class="mb-4">
+              Monica's passion lies in empowering leaders to uncover their
+              potential and make meaningful change-starting with themselves. A
+              captivating speaker and coach, she weaves powerful stories into
+              her presentations, entertaining and inspiring audiences worldwide.
+            </p>
+            <p class="mb-4">
+              Her debut book, Lessons from the Drive-Thru: Real Life Wisdom for
+              Frontline Leaders, is an Amazon bestseller that shares insightful
+              tales from her career to highlight the essence of true servant
+              leadership.
+            </p>
+            <p class="mb-4">
+              When she's not working with organizations to empower their
+              frontline, Monica enjoys life in Louisville, KY, with her wife
+              Onyxe and their furry babies, Skye and Louis.
+            </p>
+          </div>
+          <button
+            class="bio-toggle mt-2 text-speaker-purple font-medium hover:underline focus:outline-none"
+          >
+            Read more
+          </button>
+        </div>
+      </div>
+
+      <hr class="my-12 border-t-2 border-gray-200 w-full" />
+
+      <!-- Second Speaker -->
+      <div class="md:flex bg-speaker-bg items-center mt-16">
+        <!-- Image Container -->
+        <img
+          src="https://randomuser.me/api/portraits/men/32.jpg"
+          alt="David Chen"
+          class="rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-xl rounded-bl-xl md:w-1/2 lg:w-1/3 aspect-square w-full h-full object-cover"
+        />
+
+        <!-- Content Container -->
+        <div class="md:w-2/3 lg:w-2/3 md:pl-8 pt-6 md:pt-0">
+          <!-- Badge -->
+          <div
+            class="inline-block bg-speaker-orange text-white px-3 py-1 mb-4 font-semibold"
+          >
+            Workshop Leader
+          </div>
+
+          <!-- Name -->
+          <h1 class="text-4xl md:text-5xl font-bold text-speaker-purple mb-2">
+            DAVID CHEN
+          </h1>
+
+          <!-- Subtitle -->
+          <h2 class="text-xl text-gray-700 mb-6">
+            Technology Innovator & Educator
+          </h2>
+        </div>
+      </div>
+      <div class="my-8">
+        <div class="bio-container">
+          <div class="bio-content collapsed">
+            <p class="mb-4">
+              With over 20 years of experience in Silicon Valley, David has led
+              technology teams at some of the world's most innovative companies
+              including Google and Tesla. His expertise in artificial
+              intelligence and machine learning has revolutionized how companies
+              approach digital transformation.
+            </p>
+            <p class="mb-4">
+              As a passionate educator, David has developed curriculum for
+              leading universities and conducts workshops that bridge the gap
+              between theoretical knowledge and practical application in the
+              tech industry.
+            </p>
+            <p class="mb-4">
+              His recent book, "The Innovation Mindset," explores how
+              organizations can foster cultures of creativity and technological
+              advancement in an increasingly competitive landscape.
+            </p>
+            <p class="mb-4">
+              David holds a Ph.D. in Computer Science from Stanford University
+              and serves on the board of several tech startups. When not
+              immersed in technology, he enjoys rock climbing and teaching
+              coding to underprivileged youth in his community.
+            </p>
+          </div>
+          <button
+            class="bio-toggle mt-2 text-speaker-purple font-medium hover:underline focus:outline-none"
+          >
+            Read more
+          </button>
+        </div>
+      </div>
+
+      <hr class="my-12 border-t-2 border-gray-200 w-full" />
+
+      <!-- Third Speaker -->
+      <div class="md:flex bg-speaker-bg items-center mt-16">
+        <!-- Image Container -->
+        <img
+          src="https://randomuser.me/api/portraits/women/65.jpg"
+          alt="Amara Johnson"
+          class="rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-xl rounded-bl-xl md:w-1/2 lg:w-1/3 aspect-square w-full h-full object-cover"
+        />
+
+        <!-- Content Container -->
+        <div class="md:w-2/3 lg:w-2/3 md:pl-8 pt-6 md:pt-0">
+          <!-- Badge -->
+          <div
+            class="inline-block bg-speaker-orange text-white px-3 py-1 mb-4 font-semibold"
+          >
+            Panel Moderator
+          </div>
+
+          <!-- Name -->
+          <h1 class="text-4xl md:text-5xl font-bold text-speaker-purple mb-2">
+            AMARA JOHNSON
+          </h1>
+
+          <!-- Subtitle -->
+          <h2 class="text-xl text-gray-700 mb-6">
+            Sustainability Expert & Consultant
+          </h2>
+        </div>
+      </div>
+      <div class="my-8">
+        <div class="bio-container">
+          <div class="bio-content collapsed">
+            <p class="mb-4">
+              Amara Johnson is a leading voice in sustainable business practices
+              with a focus on helping organizations implement environmentally
+              responsible operations without sacrificing profitability. She has
+              advised Fortune 500 companies across diverse industries from
+              manufacturing to hospitality.
+            </p>
+            <p class="mb-4">
+              As the founder of GreenStep Consulting, Amara has developed
+              proprietary methodologies that have helped clients reduce their
+              carbon footprint by an average of 35% while simultaneously
+              improving operational efficiency.
+            </p>
+            <p class="mb-4">
+              Her dynamic speaking style and practical approach to
+              sustainability have made her a sought-after keynote speaker and
+              panel moderator at international conferences. Amara excels at
+              making complex environmental concepts accessible and actionable
+              for business leaders.
+            </p>
+            <p class="mb-4">
+              Amara holds an MBA from Harvard Business School and a Master's in
+              Environmental Science from Yale. She serves on the UN Sustainable
+              Development Advisory Board and has been recognized with numerous
+              awards for her contributions to environmental leadership.
+            </p>
+          </div>
+          <button
+            class="bio-toggle mt-2 text-speaker-purple font-medium hover:underline focus:outline-none"
+          >
+            Read more
+          </button>
+        </div>
+      </div>
+
+      <hr class="my-12 border-t-2 border-gray-200 w-full" />
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Get all toggle buttons
+        const bioToggleButtons = document.querySelectorAll('.bio-toggle');
+        
+        // Add click event listener to each button
+        bioToggleButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            // Find the closest bio-container parent
+            const container = this.closest('.bio-container');
+            // Find the bio-content within this container
+            const content = container.querySelector('.bio-content');
+            
+            // Toggle the collapsed class
+            content.classList.toggle('collapsed');
+            
+            // Update button text
+            this.textContent = content.classList.contains('collapsed') 
+              ? 'Read more' 
+              : 'Read less';
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
