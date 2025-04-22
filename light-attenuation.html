@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Light Attenuation in Water</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+        color: #333;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #2c3e50;
+        margin-top: 0;
+        font-size: 24px;
+      }
+      .visualization {
+        height: 500px;
+        margin: 30px 0;
+        position: relative;
+        border: 1px solid #ccc;
+        overflow: hidden;
+      }
+      .water-slice {
+        height: 47px; /* Will be calculated dynamically in JS */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        position: relative;
+        overflow: hidden;
+        transition: background-color 0.5s;
+      }
+      .depth-label {
+        position: absolute;
+        right: 10px;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        font-size: 14px;
+      }
+      .controls {
+        margin: 20px 0;
+      }
+      .controls label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input[type="range"] {
+        width: 100%;
+        max-width: 400px;
+      }
+      .color-options {
+        margin: 15px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .color-preset {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid #ccc;
+        transition: border-color 0.2s;
+      }
+      .color-preset.active {
+        border-color: #333;
+      }
+      .photic-boundary {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        border-top: 2px dashed rgba(255, 255, 255, 0.7);
+        z-index: 5;
+      }
+      .boundary-label {
+        position: absolute;
+        right: 10px;
+        background-color: rgba(0, 0, 0, 0.4);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 14px;
+        transform: translateY(-50%);
+        z-index: 6;
+      }
+      .info-box {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+        border-left: 4px solid #5d9eca;
+      }
+      .surface-indicator {
+        height: 30px;
+        background: linear-gradient(to bottom, #87ceeb, #1e90ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+      }
+      .light-indicator {
+        position: absolute;
+        left: 10px;
+        padding: 4px 8px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Water's Deepening Mystery: The Exponential Fading of Light</h1>
+
+      <div class="controls">
+        <label for="slices"
+          >Number of depth slices: <span id="slices-value">10</span></label
+        >
+        <input type="range" id="slices" min="5" max="20 0" value="10" />
+
+        <label for="clarity"
+          >Water clarity (extinction coefficient k):
+          <span id="clarity-value">0.1</span></label
+        >
+        <input
+          type="range"
+          id="clarity"
+          min="0.05"
+          max="0.5"
+          step="0.01"
+          value="0.1"
+        />
+        <p>
+          <small
+            >Lower values (left) = clearer water | Higher values (right) = more
+            turbid water</small
+          >
+        </p>
+
+        <label>Color palette:</label>
+        <div class="color-options">
+          <div
+            class="color-preset active"
+            id="preset-blue"
+            style="background: linear-gradient(to bottom, #e6f7ff, #001b41)"
+            title="Ocean Blue"
+          ></div>
+          <div
+            class="color-preset"
+            id="preset-green"
+            style="background: linear-gradient(to bottom, #e8ffef, #003311)"
+            title="Algal Green"
+          ></div>
+          <div
+            class="color-preset"
+            id="preset-turquoise"
+            style="background: linear-gradient(to bottom, #e5ffff, #003a3a)"
+            title="Tropical Turquoise"
+          ></div>
+          <div
+            class="color-preset"
+            id="preset-amber"
+            style="background: linear-gradient(to bottom, #fff8e6, #3a2a00)"
+            title="Tannin Amber"
+          ></div>
+          <div
+            class="color-preset"
+            id="preset-gray"
+            style="background: linear-gradient(to bottom, #ffffff, #222222)"
+            title="Monochrome"
+          ></div>
+        </div>
+      </div>
+
+      <div class="visualization">
+        <div class="surface-indicator">Water Surface</div>
+        <div id="slices-container"></div>
+      </div>
+
+      <div class="info-box">
+        <h3>The Threshold of Light and Dark</h3>
+        <p>
+          As light passes through water, it follows an exponential
+          diminishment—not the steady linear decline our minds might expect. The
+          dashed line marks the photic zone boundary, where just 1% of surface
+          light remains—a profound ecological threshold that separates two
+          fundamentally different ways of living.
+        </p>
+        <p>
+          Above this line dwells the community of the light—beings that
+          photosynthesize or hunt by sight. Below stretches a different realm,
+          where bioluminescence, chemical sensing, and pressure detection become
+          the primary ways of knowing.
+        </p>
+        <p>
+          The depth of this boundary varies with water clarity, controlled by
+          dissolved organic matter, plankton abundance, and suspended sediments.
+          Clear ocean waters might hold this threshold at 100 meters or deeper,
+          while in a nutrient-rich pond, it might lie just a meter beneath the
+          surface.
+        </p>
+        <p>
+          This pattern reminds us that beneath apparent simplicity often lies an
+          exponential relationship—a mathematical wisdom that shapes the
+          distribution of life's possibilities.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const slicesSlider = document.getElementById("slices");
+        const slicesValue = document.getElementById("slices-value");
+        const claritySlider = document.getElementById("clarity");
+        const clarityValue = document.getElementById("clarity-value");
+        const slicesContainer = document.getElementById("slices-container");
+        const colorPresets = document.querySelectorAll(".color-preset");
+
+        // Initial values
+        let numSlices = parseInt(slicesSlider.value);
+        let k = parseFloat(claritySlider.value);
+        let colorPalette = {
+          start: { r: 230, g: 247, b: 255 }, // Light blue
+          end: { r: 0, g: 27, b: 65 }, // Dark blue
+        };
+
+        // Update displayed values
+        slicesValue.textContent = numSlices;
+        clarityValue.textContent = k.toFixed(2);
+
+        // Function to calculate photic zone depth (1% light level)
+        function calculatePhoticZoneDepth(k) {
+          // Formula: I/I₀ = e^(-kz)
+          // At photocline boundary, I/I₀ = 0.01 (1% of surface light)
+          // 0.01 = e^(-kz)
+          // ln(0.01) = -kz
+          // z = -ln(0.01)/k
+          return -Math.log(0.01) / k;
+        }
+
+        // Function to create water slices
+        function createWaterSlices() {
+          slicesContainer.innerHTML = "";
+
+          const maxDepth = 100; // meters
+          const sliceDepth = maxDepth / numSlices;
+
+          // Calculate the height of each slice based on the number of slices
+          // The total height is 470px (500px minus 30px for the surface indicator)
+          const totalSlicesHeight = 470;
+          const sliceHeight = totalSlicesHeight / numSlices;
+
+          // Calculate the photic zone depth
+          const photicZoneDepth = calculatePhoticZoneDepth(k);
+
+          for (let i = 0; i < numSlices; i++) {
+            const startDepth = i * sliceDepth;
+            const endDepth = (i + 1) * sliceDepth;
+            const midDepth = (startDepth + endDepth) / 2;
+
+            // Calculate light intensity at this depth (0-1)
+            const intensity = Math.exp(-k * midDepth);
+
+            // Create water slice
+            const slice = document.createElement("div");
+            slice.className = "water-slice";
+            slice.style.height = `${sliceHeight}px`;
+
+            // For color interpolation, we'll use HSL to maintain the hue
+            // First convert RGB to HSL for start color
+            const startHSL = rgbToHsl(
+              colorPalette.start.r,
+              colorPalette.start.g,
+              colorPalette.start.b
+            );
+
+            // We'll keep the hue but adjust lightness based on intensity
+            // Saturation will slightly increase as we go deeper (until very deep) to maintain color vividness
+            const hue = startHSL.h;
+            const saturation = Math.min(startHSL.s + 0.3 * (1 - intensity), 1); // Slightly increase saturation, capped at 100%
+            const lightness = Math.max(startHSL.l * intensity, 0); // Approach black with depth
+
+            // Convert back to RGB for rendering
+            const color = hslToRgb(hue, saturation, lightness);
+            slice.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
+
+            slicesContainer.appendChild(slice);
+          }
+
+          // Add photic zone boundary if it's within our visualization range
+          if (photicZoneDepth <= maxDepth) {
+            const boundaryPosition =
+              (photicZoneDepth / maxDepth) * totalSlicesHeight + 30; // +30 for surface indicator
+
+            const boundary = document.createElement("div");
+            boundary.className = "photic-boundary";
+            boundary.style.top = `${boundaryPosition}px`;
+
+            const label = document.createElement("div");
+            label.className = "boundary-label";
+            label.style.top = `${boundaryPosition}px`;
+            label.textContent = `Photic Zone Boundary (${Math.round(
+              photicZoneDepth
+            )}m)`;
+
+            slicesContainer.appendChild(boundary);
+            slicesContainer.appendChild(label);
+          }
+        }
+
+        // Helper functions for color conversion
+        function rgbToHsl(r, g, b) {
+          r /= 255;
+          g /= 255;
+          b /= 255;
+
+          const max = Math.max(r, g, b);
+          const min = Math.min(r, g, b);
+          let h,
+            s,
+            l = (max + min) / 2;
+
+          if (max === min) {
+            h = s = 0; // achromatic
+          } else {
+            const d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+            switch (max) {
+              case r:
+                h = (g - b) / d + (g < b ? 6 : 0);
+                break;
+              case g:
+                h = (b - r) / d + 2;
+                break;
+              case b:
+                h = (r - g) / d + 4;
+                break;
+            }
+
+            h /= 6;
+          }
+
+          return { h, s, l };
+        }
+
+        function hslToRgb(h, s, l) {
+          let r, g, b;
+
+          if (s === 0) {
+            r = g = b = l; // achromatic
+          } else {
+            const hue2rgb = (p, q, t) => {
+              if (t < 0) t += 1;
+              if (t > 1) t -= 1;
+              if (t < 1 / 6) return p + (q - p) * 6 * t;
+              if (t < 1 / 2) return q;
+              if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+              return p;
+            };
+
+            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            const p = 2 * l - q;
+
+            r = hue2rgb(p, q, h + 1 / 3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1 / 3);
+          }
+
+          return {
+            r: Math.round(r * 255),
+            g: Math.round(g * 255),
+            b: Math.round(b * 255),
+          };
+        }
+
+        // Set up color palette presets
+        colorPresets.forEach((preset) => {
+          preset.addEventListener("click", () => {
+            // Remove active class from all presets
+            colorPresets.forEach((p) => p.classList.remove("active"));
+            // Add active class to clicked preset
+            preset.classList.add("active");
+
+            // Set color palette based on preset
+            switch (preset.id) {
+              case "preset-blue":
+                colorPalette = {
+                  start: { r: 230, g: 247, b: 255 }, // Light blue
+                  end: { r: 0, g: 0, b: 0 }, // Black
+                };
+                break;
+              case "preset-green":
+                colorPalette = {
+                  start: { r: 232, g: 255, b: 239 }, // Light green
+                  end: { r: 0, g: 0, b: 0 }, // Black
+                };
+                break;
+              case "preset-turquoise":
+                colorPalette = {
+                  start: { r: 229, g: 255, b: 255 }, // Light turquoise
+                  end: { r: 0, g: 0, b: 0 }, // Black
+                };
+                break;
+              case "preset-amber":
+                colorPalette = {
+                  start: { r: 255, g: 248, b: 230 }, // Light amber
+                  end: { r: 0, g: 0, b: 0 }, // Black
+                };
+                break;
+              case "preset-gray":
+                colorPalette = {
+                  start: { r: 255, g: 255, b: 255 }, // White
+                  end: { r: 0, g: 0, b: 0 }, // Black
+                };
+                break;
+            }
+
+            // Update visualization
+            createWaterSlices();
+          });
+        });
+
+        // Initial creation
+        createWaterSlices();
+
+        // Update on slider change
+        slicesSlider.addEventListener("input", () => {
+          numSlices = parseInt(slicesSlider.value);
+          slicesValue.textContent = numSlices;
+          createWaterSlices();
+        });
+
+        claritySlider.addEventListener("input", () => {
+          k = parseFloat(claritySlider.value);
+          clarityValue.textContent = k.toFixed(2);
+          createWaterSlices();
+        });
+      });
+    </script>
+  </body>
+</html>
