@@ -402,7 +402,7 @@
 
         {
           name: "Streets",
-          value: "mapbox://styles/shreshthmohan/cm9y9q1qx01kp01r3cqjx5vel",
+          value: "mapbox://styles/shreshthmohan/cm9zgri1900lu01s5fz6z9p95",
         },
         {
           name: "Minimal Light",
@@ -506,7 +506,8 @@
       function initMap() {
         map = new mapboxgl.Map({
           container: "map-container",
-          style: mapStyles[0].value,
+          // default streets
+          style: "mapbox://styles/mapbox/streets-v12",
           center: selectedLocation.coordinates,
           zoom: selectedLocation.zoom,
           bearing: selectedLocation.bearing, // Initialize with saved bearing
