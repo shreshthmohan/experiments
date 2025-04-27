@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Love Map - Where It All Began</title>
+    <title>Memory Map - Where It All Began</title>
     <script src="/tailwindcss.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
     <link
@@ -81,7 +81,7 @@
         <div class="w-full md:w-3/5 order-1">
           <div class="w-full mx-auto p-8">
             <svg
-              id="love-map-svg"
+              id="memory-map-svg"
               class="w-full h-auto shadow-xl shadow-black"
               viewBox="0 0 600 800"
               xmlns="http://www.w3.org/2000/svg"
@@ -431,7 +431,7 @@
 
       // Apply SVG parameters to create an adaptive living structure
       function applyLayoutParameters() {
-        const svg = document.getElementById("love-map-svg");
+        const svg = document.getElementById("memory-map-svg");
         if (!svg) return;
 
         // Set viewBox
@@ -749,7 +749,7 @@
           await new Promise((resolve) => requestAnimationFrame(resolve));
 
           // Get the SVG element
-          const svgElement = document.getElementById("love-map-svg");
+          const svgElement = document.getElementById("memory-map-svg");
           const svgData = new XMLSerializer().serializeToString(svgElement);
 
           // Create a Blob from the SVG data
@@ -761,13 +761,13 @@
           const downloadLink = document.createElement("a");
 
           // Format filename with location and date if available
-          let locationText = selectedLocation.name.split(",")[0] || "LoveMap";
+          let locationText = selectedLocation.name.split(",")[0] || "MemoryMap";
           locationText = locationText.replace(/[^a-z0-9]/gi, "_").toLowerCase();
 
           let dateText = document.getElementById("date-input").value || "";
           dateText = dateText.replace(/[^a-z0-9]/gi, "_").toLowerCase();
 
-          const filename = `LoveMap_${locationText}_${dateText}.svg`;
+          const filename = `MemoryMap_${locationText}_${dateText}.svg`;
 
           downloadLink.download = filename;
           downloadLink.href = url;
