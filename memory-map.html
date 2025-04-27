@@ -219,7 +219,7 @@
               <div>
                 <label
                   class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
-                  >Location</label
+                  >Map Location</label
                 >
                 <div class="relative">
                   <input
@@ -282,6 +282,20 @@
                   id="moment-input"
                   class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 font-montserrat tracking-wide"
                   placeholder="First met at a coffee shop"
+                />
+              </div>
+
+              <!-- Custom Location Text -->
+              <div>
+                <label
+                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
+                  >Custom Location</label
+                >
+                <input
+                  type="text"
+                  id="custom-location-input"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 font-montserrat tracking-wide"
+                  placeholder="Chandni Chowk"
                 />
               </div>
 
@@ -729,7 +743,9 @@
           document.getElementById("moment-input").value || "ENGAGED";
         dateText.textContent =
           document.getElementById("date-input").value || "APRIL 25, 2023";
-        locationText.textContent = selectedLocation.name;
+        locationText.textContent =
+          document.getElementById("custom-location-input").value ||
+          selectedLocation.name;
       }
 
       // Update everything when any input changes
@@ -876,13 +892,16 @@
         // Update when inputs change
         document
           .getElementById("names-input")
-          .addEventListener("input", updateEverything);
+          .addEventListener("input", updateSVGText);
         document
           .getElementById("moment-input")
-          .addEventListener("input", updateEverything);
+          .addEventListener("input", updateSVGText);
         document
           .getElementById("date-input")
-          .addEventListener("input", updateEverything);
+          .addEventListener("input", updateSVGText);
+        document
+          .getElementById("custom-location-input")
+          .addEventListener("input", updateSVGText);
 
         // Initialize with default values
         document.getElementById("location-input").value = selectedLocation.name;
