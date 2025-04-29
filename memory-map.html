@@ -16,16 +16,14 @@
       href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
       type="text/css"
     />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap"
-      rel="stylesheet"
-    />
+    <!-- quicksand font from a local file -->
+    <link rel="stylesheet" href="/fonts/Quicksand-VariableFont.ttf" />
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              montserrat: ["Montserrat", "sans-serif"],
+              quicksand: ["Quicksand", "sans-serif"],
             },
           },
         },
@@ -64,22 +62,13 @@
   </head>
 
   <body
-    class="bg-rose-50 text-gray-700 min-h-screen flex flex-col items-center justify-center p-6 font-montserrat"
+    class="text-gray-700 min-h-screen flex flex-col items-center justify-center font-quicksand pt-20"
   >
-    <div class="container mx-auto max-w-6xl">
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-light text-rose-800 mb-2 tracking-wider">
-          Where It All Began
-        </h1>
-        <p class="text-gray-600 italic">
-          Commemorate the place your hearts first connected
-        </p>
-      </div>
-
-      <div class="flex flex-col md:flex-row gap-6">
+    <div class="container mx-auto max-w-7xl pb-20">
+      <div class="flex flex-col md:flex-row gap-6 md:gap-12">
         <!-- Map Container (Left on desktop, Top on mobile) -->
-        <div class="w-full md:w-3/5 order-1">
-          <div class="w-full mx-auto p-8">
+        <div class="w-full md:w-3/5 order-1 max-h-screen bg-gray-100">
+          <div class="w-full mx-auto p-8 lg:px-20 xl:px-32">
             <svg
               id="memory-map-svg"
               class="w-full h-auto shadow-xl shadow-black"
@@ -95,6 +84,21 @@
                     flood-opacity="1"
                   />
                 </filter>
+
+                <mask id="circleMask">
+                  <!-- White background (white parts are visible, black parts are invisible) -->
+                  <rect x="0" y="0" width="600" height="800" fill="white" />
+
+                  <!-- Black circle in the center (creates a transparent circle in the mask) -->
+                  <!-- Center the circle on the map area -->
+                  <circle
+                    cx="300"
+                    cy="310"
+                    r="220"
+                    fill="black"
+                    id="map-circle"
+                  />
+                </mask>
               </defs>
 
               <!-- Map background -->
@@ -115,6 +119,16 @@
                 width="520"
                 height="520"
                 preserveAspectRatio="xMidYMid slice"
+              />
+              <rect
+                x="40"
+                y="40"
+                width="520"
+                height="920"
+                fill="white"
+                mask="url(#circleMask)"
+                id="map-mask"
+                data-show-circle="true"
               />
               <rect
                 x="40"
@@ -145,7 +159,7 @@
                 height="30.7"
                 id="heart-marker"
                 viewBox="2 3 20 18.350000381469727"
-                opacity="1"
+                opacity="0.85"
               >
                 <g>
                   <path
@@ -163,9 +177,9 @@
                 text-anchor="end"
                 font-size="32"
                 font-weight="normal"
-                font-family="'Genera-AltLight', sans-serif"
+                font-family="'Noto Sans', sans-serif"
                 fill="#111111"
-                class="uppercase"
+                class="font-light"
               ></text>
               <text
                 id="moment-text"
@@ -175,8 +189,9 @@
                 font-size="18"
                 font-weight="normal"
                 text-transform="uppercase"
-                font-family="'Genera-AltLight', sans-serif"
+                font-family="'Noto Sans', sans-serif"
                 fill="#333333"
+                class="font-light"
               ></text>
               <text
                 id="location-text"
@@ -184,8 +199,9 @@
                 y="690"
                 text-anchor="end"
                 font-size="18"
-                font-family="'Genera-AltLight', sans-serif"
+                font-family="'Noto Sans', sans-serif"
                 fill="#555555"
+                class="font-light"
               ></text>
               <text
                 id="date-text"
@@ -193,8 +209,9 @@
                 y="720"
                 text-anchor="end"
                 font-size="18"
-                font-family="'Genera-AltLight', sans-serif"
+                font-family="'Noto Sans', sans-serif"
                 fill="#555555"
+                class="font-light"
               ></text>
             </svg>
             <!-- Download Button -->
@@ -211,14 +228,12 @@
 
         <!-- Input Controls (Right on desktop, Bottom on mobile) -->
         <div class="w-full md:w-2/5 order-2">
-          <div
-            class="bg-white rounded-lg shadow-lg p-6 h-full border border-gray-200 md:sticky md:top-5"
-          >
+          <div class="bg-white h-full md:sticky md:top-5">
             <div class="flex flex-col space-y-4">
               <!-- Location Input -->
               <div>
                 <label
-                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
+                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
                   >Map Location</label
                 >
                 <div class="relative">
@@ -260,7 +275,7 @@
               <!-- Names Input -->
               <div>
                 <label
-                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
+                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
                   >Names</label
                 >
                 <input
@@ -274,7 +289,7 @@
               <!-- Moment Text -->
               <div>
                 <label
-                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
+                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
                   >Moment</label
                 >
                 <input
@@ -288,7 +303,7 @@
               <!-- Custom Location Text -->
               <div>
                 <label
-                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
+                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
                   >Custom Location</label
                 >
                 <input
@@ -302,7 +317,7 @@
               <!-- Date Text -->
               <div>
                 <label
-                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
+                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
                   >Date</label
                 >
                 <input
@@ -316,7 +331,7 @@
               <!-- Map Style -->
               <div>
                 <label
-                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
+                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
                   >Map Style</label
                 >
                 <select
@@ -326,11 +341,63 @@
                   <!-- Will be populated by JavaScript -->
                 </select>
               </div>
+
+              <!-- map shape -->
+              <div>
+                <label
+                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
+                  >Map Shape</label
+                >
+                <select
+                  id="map-shape-select"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 font-montserrat tracking-wide"
+                >
+                  <option value="rectangle">Rectangle</option>
+                  <option value="circle">Circle</option>
+                </select>
+              </div>
+
+              <!-- names font -->
+              <div>
+                <label
+                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
+                  >Names Font</label
+                >
+                <select
+                  id="names-font-select"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 font-montserrat tracking-wide"
+                >
+                  <option value="'Noto Sans', sans-serif">
+                    Classic (Sans)
+                  </option>
+                  <option value="'Wistania', cursive">Cursive</option>
+                </select>
+              </div>
+
+              <!-- Names text font size slider -->
+              <div>
+                <label
+                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
+                  >Names Text Font Size</label
+                >
+                <input
+                  type="range"
+                  id="names-font-size-slider"
+                  min="16"
+                  max="128"
+                  value="32"
+                  class="w-full"
+                />
+                <div class="text-right">
+                  <span id="names-font-size-value">96</span> px
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <footer class="w-full my-16 text-center">Anchor Customs</footer>
 
     <!-- Location Selection Modal -->
     <div
@@ -385,8 +452,19 @@
     </div>
     <style>
       @font-face {
-        font-family: "Genera-AltLight";
-        src: url("/fonts/Genera-AltLight.woff2") format("woff2");
+        font-family: "Noto Sans";
+        src: url("/fonts/NotoSans-VariableFont.ttf") format("truetype");
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Quicksand";
+        src: url("/fonts/Quicksand-VariableFont.ttf") format("truetype");
+        font-display: swap;
+      }
+      /* Wistania */
+      @font-face {
+        font-family: "Wistania";
+        src: url("/fonts/Wistania.ttf") format("truetype");
         font-display: swap;
       }
     </style>
@@ -400,6 +478,7 @@
         viewBox: { width: 600, height: 800 },
         border: { margin: 0, thickness: 40, color: "#333", radius: 0 },
         content: { padding: 70, mapHeight: 520 },
+        circle: { radius: 220 },
         textLayout: { namesY: 640, momentY: 665, locationY: 685, dateY: 705 },
       };
 
@@ -407,7 +486,7 @@
       const mapStyles = [
         {
           name: "Outdoors",
-          value: "mapbox://styles/shreshthmohan/cm9y9res8004s01r0584z2l1j",
+          value: "mapbox://styles/shreshthmohan/cma2j7y1p00tf01s5ccjjamf9",
         },
         {
           name: "Natural",
@@ -440,11 +519,12 @@
       let map;
       let geocoder;
       let mapImage = document.getElementById("map-image");
+      let mapMask = document.getElementById("map-mask");
       let heartMarker = document.getElementById("heart-marker");
       let compassArrow; // Reference to the compass arrow element
 
       // Apply SVG parameters to create an adaptive living structure
-      function applyLayoutParameters() {
+      function applyLayoutParameters(mapShape = "rectangle") {
         const svg = document.getElementById("memory-map-svg");
         if (!svg) return;
 
@@ -494,17 +574,69 @@
         mapImage.setAttribute("height", svgParams.content.mapHeight);
 
         // Text positioning
-        textElements.names.setAttribute("x", contextEndX);
-        textElements.names.setAttribute("y", svgParams.textLayout.namesY);
+        if (mapShape === "rectangle") {
+          textElements.names.setAttribute("x", contextEndX);
+          textElements.names.setAttribute("y", svgParams.textLayout.namesY);
 
-        textElements.moment.setAttribute("x", contextEndX);
-        textElements.moment.setAttribute("y", svgParams.textLayout.momentY);
+          textElements.moment.setAttribute("x", contextEndX);
+          textElements.moment.setAttribute("y", svgParams.textLayout.momentY);
 
-        textElements.location.setAttribute("x", contextEndX);
-        textElements.location.setAttribute("y", svgParams.textLayout.locationY);
+          textElements.location.setAttribute("x", contextEndX);
+          textElements.location.setAttribute(
+            "y",
+            svgParams.textLayout.locationY
+          );
 
-        textElements.date.setAttribute("x", contextEndX);
-        textElements.date.setAttribute("y", svgParams.textLayout.dateY);
+          textElements.date.setAttribute("x", contextEndX);
+          textElements.date.setAttribute("y", svgParams.textLayout.dateY);
+
+          // text-anchor=end for all text elements
+          textElements.names.setAttribute("text-anchor", "end");
+          textElements.moment.setAttribute("text-anchor", "end");
+          textElements.location.setAttribute("text-anchor", "end");
+          textElements.date.setAttribute("text-anchor", "end");
+
+          // hide any elements with data-show-circle="true"
+          document
+            .querySelectorAll("[data-show-circle='true']")
+            .forEach((el) => {
+              el.classList.add("hidden");
+            });
+        } else if (mapShape === "circle") {
+          textElements.names.setAttribute("x", centerX);
+          textElements.names.setAttribute(
+            "y",
+            svgParams.textLayout.namesY - 20
+          );
+
+          textElements.moment.setAttribute("x", centerX);
+          textElements.moment.setAttribute(
+            "y",
+            svgParams.textLayout.momentY - 10
+          );
+
+          textElements.location.setAttribute("x", centerX);
+          textElements.location.setAttribute(
+            "y",
+            svgParams.textLayout.locationY - 10
+          );
+
+          textElements.date.setAttribute("x", centerX);
+          textElements.date.setAttribute("y", svgParams.textLayout.dateY - 10);
+
+          // text-anchor=middle for all text elements
+          textElements.names.setAttribute("text-anchor", "middle");
+          textElements.moment.setAttribute("text-anchor", "middle");
+          textElements.location.setAttribute("text-anchor", "middle");
+          textElements.date.setAttribute("text-anchor", "middle");
+
+          // show any elements with data-show-circle="true", remove hidden class
+          document
+            .querySelectorAll("[data-show-circle='true']")
+            .forEach((el) => {
+              el.classList.remove("hidden");
+            });
+        }
       }
 
       // Populate map style select
@@ -556,7 +688,7 @@
         compassIndicator.className =
           "absolute bottom-2.5 right-2.5 w-10 h-10 bg-white bg-opacity-80 rounded-full pointer-events-none z-10 flex items-center justify-center shadow";
         compassIndicator.innerHTML = `
-                <div class="absolute text-xs top-0.5 left-1/2 transform -translate-x-1/2 text-rose-700 font-bold">N</div>
+                <div class="absolute text-sm top-0.5 left-1/2 transform -translate-x-1/2 text-rose-700 font-bold">N</div>
                 <div class="compass-arrow"></div>
                 <div class="absolute rounded-full w-2 h-2 bg-gray-400"></div>
             `;
@@ -738,11 +870,12 @@
         const locationText = document.getElementById("location-text");
 
         namesText.textContent =
-          document.getElementById("names-input").value || "Emma & Noah";
+          document.getElementById("names-input").value || "EMMA & NOAH";
         momentText.textContent =
           document.getElementById("moment-input").value || "ENGAGED";
         dateText.textContent =
-          document.getElementById("date-input").value || "APRIL 25, 2023";
+          document.getElementById("date-input").value ||
+          "SUNDAY, APRIL 25 2023";
         locationText.textContent =
           document.getElementById("custom-location-input").value ||
           selectedLocation.name;
@@ -902,6 +1035,42 @@
         document
           .getElementById("custom-location-input")
           .addEventListener("input", updateSVGText);
+
+        // Map shape
+        document
+          .getElementById("map-shape-select")
+          .addEventListener("change", () => {
+            // get selected value
+            const shape = document.getElementById("map-shape-select").value;
+
+            applyLayoutParameters(shape);
+          });
+
+        // names font
+        document
+          .getElementById("names-font-select")
+          .addEventListener("change", () => {
+            // get selected value
+            const font = document.getElementById("names-font-select").value;
+
+            document
+              .getElementById("names-text")
+              .setAttribute("font-family", font);
+          });
+
+        // names font size
+        document
+          .getElementById("names-font-size-slider")
+          .addEventListener("input", () => {
+            // get selected value
+            const fontSize = document.getElementById(
+              "names-font-size-slider"
+            ).value;
+
+            document
+              .getElementById("names-text")
+              .setAttribute("font-size", fontSize);
+          });
 
         // Initialize with default values
         document.getElementById("location-input").value = selectedLocation.name;
