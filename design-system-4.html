@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anchor Customs - Design System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              sand: "#b09272",
+              burgundy: "#6d383a",
+              gold: "#c3aa41",
+            },
+            fontFamily: {
+              quicksand: ["Quicksand", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Quicksand", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-white min-h-screen">
+    <div class="container mx-auto px-4 py-12 max-w-5xl">
+      <!-- Header -->
+      <header class="mb-12">
+        <div class="flex items-center justify-center md:justify-start">
+          <div
+            class="bg-sand rounded-full p-4 h-16 w-16 flex items-center justify-center"
+          >
+            <span class="text-white text-2xl">⚓</span>
+          </div>
+          <div class="ml-4">
+            <h1 class="text-xl md:text-2xl font-quicksand font-bold text-sand">
+              anchor.customs
+            </h1>
+            <p class="text-sm text-gray-500">Bring your imagination to pages</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="mb-16">
+        <div class="mb-8 border-b border-gray-200 pb-4">
+          <h2 class="text-2xl font-display font-semibold text-burgundy">
+            Typography
+          </h2>
+          <p class="text-gray-600">
+            Our typography is designed to be playful yet readable, perfect for
+            creating a warm, gift-giving experience.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-lg font-display font-medium text-sand mb-4">
+              Headings
+            </h3>
+
+            <div class="space-y-6">
+              <div>
+                <h1 class="text-4xl font-display font-bold text-burgundy">
+                  H1 Heading
+                </h1>
+                <p class="text-sm text-gray-500 mt-1">
+                  Montserrat Bold 36px/44px
+                </p>
+              </div>
+
+              <div>
+                <h2 class="text-3xl font-display font-semibold text-burgundy">
+                  H2 Heading
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">
+                  Montserrat SemiBold 30px/38px
+                </p>
+              </div>
+
+              <div>
+                <h3 class="text-2xl font-display font-medium text-burgundy">
+                  H3 Heading
+                </h3>
+                <p class="text-sm text-gray-500 mt-1">
+                  Montserrat Medium 24px/32px
+                </p>
+              </div>
+
+              <div>
+                <h4 class="text-xl font-display font-medium text-burgundy">
+                  H4 Heading
+                </h4>
+                <p class="text-sm text-gray-500 mt-1">
+                  Montserrat Medium 20px/28px
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-display font-medium text-sand mb-4">
+              Body Text
+            </h3>
+
+            <div class="space-y-6">
+              <div>
+                <p class="text-base font-body text-gray-800">
+                  Regular paragraph text (p) is set in Open Sans Regular. This
+                  is our primary text style for content across the website. It
+                  should maintain good readability while maintaining a friendly
+                  tone.
+                </p>
+                <p class="text-sm text-gray-500 mt-1">
+                  Open Sans Regular 16px/24px
+                </p>
+              </div>
+
+              <div>
+                <p class="text-sm font-body text-gray-700">
+                  Small text is used for secondary information, captions, and
+                  form labels. It should still be clearly legible even at this
+                  reduced size.
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  Open Sans Regular 14px/20px
+                </p>
+              </div>
+
+              <div>
+                <p class="text-lg font-body font-semibold text-burgundy">
+                  Featured text might be used to highlight important information
+                  or quotes from happy customers about their gifted magazines.
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  Open Sans SemiBold 18px/28px
+                </p>
+              </div>
+
+              <div>
+                <a
+                  href="#"
+                  class="text-sand hover:text-burgundy font-display font-medium transition duration-200"
+                  >This is a text link style</a
+                >
+                <p class="text-xs text-gray-500 mt-1">
+                  Montserrat Medium with hover state
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12 bg-gray-50 p-6 rounded-lg">
+          <h3 class="text-lg font-display font-medium text-sand mb-4">
+            Color Usage in Typography
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <p class="text-burgundy font-display font-semibold mb-2">
+                Primary Headlines
+              </p>
+              <div class="h-12 bg-burgundy rounded-md"></div>
+              <p class="text-xs text-gray-600 mt-2">
+                #6d383a - Used for main headings and important text
+              </p>
+            </div>
+
+            <div>
+              <p class="text-sand font-display font-semibold mb-2">
+                Secondary Headlines
+              </p>
+              <div class="h-12 bg-sand rounded-md"></div>
+              <p class="text-xs text-gray-600 mt-2">
+                #b09272 - Used for section headings and highlights
+              </p>
+            </div>
+
+            <div>
+              <p class="text-gold font-display font-semibold mb-2">
+                Accent Text
+              </p>
+              <div class="h-12 bg-gold rounded-md"></div>
+              <p class="text-xs text-gray-600 mt-2">
+                #c3aa41 - Used sparingly for special highlights
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12">
+          <h3 class="text-lg font-display font-medium text-sand mb-4">
+            Typography in Context
+          </h3>
+
+          <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <h2 class="text-2xl font-display font-semibold text-burgundy mb-3">
+              Create Your Story
+            </h2>
+            <p class="text-base font-body text-gray-800 mb-6">
+              Turn your cherished memories into beautifully designed magazine
+              spreads that your loved ones will treasure forever.
+            </p>
+
+            <div
+              class="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+            >
+              <button
+                class="bg-burgundy hover:bg-burgundy/90 text-white font-display font-medium py-2 px-6 rounded-full transition duration-200"
+              >
+                Start Your Order
+              </button>
+              <a
+                href="#"
+                class="text-sand hover:text-burgundy font-display font-medium transition duration-200"
+                >View Examples</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Form Elements Section -->
+      <section class="mb-16">
+        <div class="mb-8 border-b border-gray-200 pb-4">
+          <h2 class="text-2xl font-quicksand font-bold text-burgundy">
+            Form Elements
+          </h2>
+          <p class="text-gray-600">
+            Our form elements are designed to be intuitive and consistent,
+            making it easy for users to create their custom magazine orders.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- Input Fields -->
+          <div>
+            <h3 class="text-lg font-quicksand font-semibold text-sand mb-6">
+              Input Fields
+            </h3>
+
+            <div class="space-y-8">
+              <!-- Text Input -->
+              <div>
+                <label
+                  for="text-input"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Text Input</label
+                >
+                <input
+                  type="text"
+                  id="text-input"
+                  placeholder="Enter recipient's name"
+                  class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-sand focus:ring-1 focus:ring-sand transition-all duration-200 outline-none font-quicksand"
+                />
+                <p class="mt-1 text-xs text-gray-500">Helper text goes here</p>
+              </div>
+
+              <!-- Email Input -->
+              <div>
+                <label
+                  for="email-input"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Email Input</label
+                >
+                <input
+                  type="email"
+                  id="email-input"
+                  placeholder="your@email.com"
+                  class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-sand focus:ring-1 focus:ring-sand transition-all duration-200 outline-none font-quicksand"
+                />
+              </div>
+
+              <!-- Text Area -->
+              <div>
+                <label
+                  for="message-input"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Message</label
+                >
+                <textarea
+                  id="message-input"
+                  rows="4"
+                  placeholder="Enter your personal message to include in the magazine"
+                  class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-sand focus:ring-1 focus:ring-sand transition-all duration-200 outline-none font-quicksand resize-none"
+                ></textarea>
+                <p class="mt-1 text-xs text-gray-500">Maximum 250 characters</p>
+              </div>
+
+              <!-- Disabled Input -->
+              <div>
+                <label
+                  for="disabled-input"
+                  class="block text-sm font-medium text-gray-400 mb-1"
+                  >Disabled Input</label
+                >
+                <input
+                  type="text"
+                  id="disabled-input"
+                  placeholder="Not available"
+                  disabled
+                  class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed font-quicksand"
+                />
+              </div>
+
+              <!-- Error Input -->
+              <div>
+                <label
+                  for="error-input"
+                  class="block text-sm font-medium text-red-600 mb-1"
+                  >Error Input</label
+                >
+                <input
+                  type="text"
+                  id="error-input"
+                  value="Invalid input"
+                  class="w-full px-4 py-2.5 rounded-lg border border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all duration-200 outline-none font-quicksand"
+                />
+                <p class="mt-1 text-xs text-red-600">
+                  Please enter a valid value
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Selection Elements -->
+          <div>
+            <h3 class="text-lg font-quicksand font-semibold text-sand mb-6">
+              Selection Elements
+            </h3>
+
+            <div class="space-y-8">
+              <!-- Select Dropdown -->
+              <div>
+                <label
+                  for="select-input"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Magazine Size</label
+                >
+                <div class="relative">
+                  <select
+                    id="select-input"
+                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-sand focus:ring-1 focus:ring-sand transition-all duration-200 outline-none font-quicksand appearance-none"
+                  >
+                    <option value="" disabled>Choose a size</option>
+                    <option value="small">Small (5x7")</option>
+                    <option value="medium">Medium (8x10")</option>
+                    <option value="large">Large (11x14")</option>
+                  </select>
+                  <div
+                    class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                  >
+                    <svg
+                      class="w-5 h-5 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Radio Buttons -->
+              <div>
+                <span class="block text-sm font-medium text-gray-700 mb-2"
+                  >Cover Style</span
+                >
+
+                <div class="space-y-2">
+                  <div class="flex items-center">
+                    <input
+                      id="radio-1"
+                      name="cover-style"
+                      type="radio"
+                      class="h-4 w-4 text-burgundy focus:ring-burgundy border-gray-300"
+                    />
+                    <label
+                      for="radio-1"
+                      class="ml-2 block text-sm text-gray-700"
+                      >Classic</label
+                    >
+                  </div>
+
+                  <div class="flex items-center">
+                    <input
+                      id="radio-2"
+                      name="cover-style"
+                      type="radio"
+                      class="h-4 w-4 text-burgundy focus:ring-burgundy border-gray-300"
+                      checked
+                    />
+                    <label
+                      for="radio-2"
+                      class="ml-2 block text-sm text-gray-700"
+                      >Modern</label
+                    >
+                  </div>
+
+                  <div class="flex items-center">
+                    <input
+                      id="radio-3"
+                      name="cover-style"
+                      type="radio"
+                      class="h-4 w-4 text-burgundy focus:ring-burgundy border-gray-300"
+                    />
+                    <label
+                      for="radio-3"
+                      class="ml-2 block text-sm text-gray-700"
+                      >Minimalist</label
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Checkboxes -->
+              <div>
+                <span class="block text-sm font-medium text-gray-700 mb-2"
+                  >Special Features</span
+                >
+
+                <div class="space-y-2">
+                  <div class="flex items-center">
+                    <input
+                      id="checkbox-1"
+                      type="checkbox"
+                      class="h-4 w-4 text-gold focus:ring-gold border-gray-300 rounded"
+                    />
+                    <label
+                      for="checkbox-1"
+                      class="ml-2 block text-sm text-gray-700"
+                      >Gold foil accents (+$5)</label
+                    >
+                  </div>
+
+                  <div class="flex items-center">
+                    <input
+                      id="checkbox-2"
+                      type="checkbox"
+                      class="h-4 w-4 text-gold focus:ring-gold border-gray-300 rounded"
+                    />
+                    <label
+                      for="checkbox-2"
+                      class="ml-2 block text-sm text-gray-700"
+                      >Premium paper (+$3)</label
+                    >
+                  </div>
+
+                  <div class="flex items-center">
+                    <input
+                      id="checkbox-3"
+                      type="checkbox"
+                      class="h-4 w-4 text-gold focus:ring-gold border-gray-300 rounded"
+                    />
+                    <label
+                      for="checkbox-3"
+                      class="ml-2 block text-sm text-gray-700"
+                      >Gift wrapping (+$2)</label
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- File Upload -->
+              <div>
+                <span class="block text-sm font-medium text-gray-700 mb-2"
+                  >Upload Photos</span
+                >
+
+                <div
+                  class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-sand transition-colors"
+                >
+                  <div class="space-y-1 text-center">
+                    <svg
+                      class="mx-auto h-12 w-12 text-gray-400"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 48 48"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    <div class="flex justify-center text-sm text-gray-600">
+                      <label
+                        for="file-upload"
+                        class="relative cursor-pointer rounded-md font-medium text-sand hover:text-burgundy focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-sand transition-colors"
+                      >
+                        <span>Upload files</span>
+                        <input
+                          id="file-upload"
+                          name="file-upload"
+                          type="file"
+                          class="sr-only"
+                          multiple
+                        />
+                      </label>
+                      <p class="pl-1">or drag and drop</p>
+                    </div>
+                    <p class="text-xs text-gray-500">
+                      PNG, JPG, GIF up to 10MB
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="mt-12">
+          <h3 class="text-lg font-quicksand font-semibold text-sand mb-6">
+            Buttons
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 class="text-sm font-medium text-gray-700 mb-4">
+                Primary Buttons
+              </h4>
+
+              <div class="space-y-4">
+                <button
+                  class="bg-burgundy hover:bg-burgundy/90 text-white font-quicksand font-medium py-2.5 px-6 rounded-full transition duration-200 w-full"
+                >
+                  Start Your Order
+                </button>
+
+                <button
+                  class="bg-burgundy hover:bg-burgundy/90 text-white font-quicksand font-medium py-2 px-4 rounded-full transition duration-200 text-sm w-full"
+                >
+                  View Smaller
+                </button>
+
+                <button
+                  class="bg-burgundy hover:bg-burgundy/90 text-white font-quicksand font-medium py-3 px-8 rounded-full transition duration-200 text-lg w-full"
+                >
+                  Checkout
+                </button>
+
+                <button
+                  disabled
+                  class="bg-gray-300 text-gray-500 font-quicksand font-medium py-2.5 px-6 rounded-full cursor-not-allowed w-full"
+                >
+                  Disabled
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-sm font-medium text-gray-700 mb-4">
+                Secondary Buttons
+              </h4>
+
+              <div class="space-y-4">
+                <button
+                  class="bg-white hover:bg-gray-50 text-burgundy border border-burgundy font-quicksand font-medium py-2.5 px-6 rounded-full transition duration-200 w-full"
+                >
+                  Browse Examples
+                </button>
+
+                <button
+                  class="bg-sand hover:bg-sand/90 text-white font-quicksand font-medium py-2.5 px-6 rounded-full transition duration-200 w-full"
+                >
+                  Save Draft
+                </button>
+
+                <button
+                  class="bg-transparent hover:bg-gray-50 text-sand hover:text-burgundy font-quicksand font-medium py-2.5 px-6 rounded-full transition duration-200 border border-sand hover:border-burgundy w-full"
+                >
+                  Learn More
+                </button>
+
+                <button
+                  class="bg-gold hover:bg-gold/90 text-white font-quicksand font-medium py-2.5 px-6 rounded-full transition duration-200 w-full"
+                >
+                  Special Offer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Example -->
+        <div class="mt-12 bg-gray-50 p-6 rounded-lg">
+          <h3 class="text-lg font-quicksand font-semibold text-burgundy mb-6">
+            Sample Form
+          </h3>
+
+          <form class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label
+                  for="recipient-name"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Recipient's Name</label
+                >
+                <input
+                  type="text"
+                  id="recipient-name"
+                  placeholder="Who is this gift for?"
+                  class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-sand focus:ring-1 focus:ring-sand transition-all duration-200 outline-none font-quicksand"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="occasion"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Occasion</label
+                >
+                <div class="relative">
+                  <select
+                    id="occasion"
+                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-sand focus:ring-1 focus:ring-sand transition-all duration-200 outline-none font-quicksand appearance-none"
+                  >
+                    <option value="" disabled selected>
+                      Select an occasion
+                    </option>
+                    <option value="birthday">Birthday</option>
+                    <option value="anniversary">Anniversary</option>
+                    <option value="graduation">Graduation</option>
+                    <option value="wedding">Wedding</option>
+                    <option value="other">Other</option>
+                  </select>
+                  <div
+                    class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                  >
+                    <svg
+                      class="w-5 h-5 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <span class="block text-sm font-medium text-gray-700 mb-2"
+                >Magazine Style</span
+              >
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div
+                  class="relative border rounded-lg p-4 cursor-pointer hover:border-sand transition-colors"
+                >
+                  <input
+                    type="radio"
+                    name="magazine-style"
+                    id="style-modern"
+                    class="sr-only"
+                  />
+                  <label for="style-modern" class="cursor-pointer">
+                    <div
+                      class="h-32 bg-gray-200 rounded-md flex items-center justify-center mb-2"
+                    >
+                      <span class="text-gray-500">Style Preview</span>
+                    </div>
+                    <p class="text-center font-medium">Modern</p>
+                  </label>
+                  <div
+                    class="absolute top-2 right-2 h-4 w-4 rounded-full border border-gray-300"
+                  ></div>
+                </div>
+
+                <div
+                  class="relative border border-sand rounded-lg p-4 cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="magazine-style"
+                    id="style-classic"
+                    class="sr-only"
+                    checked
+                  />
+                  <label for="style-classic" class="cursor-pointer">
+                    <div
+                      class="h-32 bg-gray-200 rounded-md flex items-center justify-center mb-2"
+                    >
+                      <span class="text-gray-500">Style Preview</span>
+                    </div>
+                    <p class="text-center font-medium">Classic</p>
+                  </label>
+                  <div
+                    class="absolute top-2 right-2 h-4 w-4 rounded-full border border-sand bg-sand"
+                  ></div>
+                </div>
+
+                <div
+                  class="relative border rounded-lg p-4 cursor-pointer hover:border-sand transition-colors"
+                >
+                  <input
+                    type="radio"
+                    name="magazine-style"
+                    id="style-retro"
+                    class="sr-only"
+                  />
+                  <label for="style-retro" class="cursor-pointer">
+                    <div
+                      class="h-32 bg-gray-200 rounded-md flex items-center justify-center mb-2"
+                    >
+                      <span class="text-gray-500">Style Preview</span>
+                    </div>
+                    <p class="text-center font-medium">Retro</p>
+                  </label>
+                  <div
+                    class="absolute top-2 right-2 h-4 w-4 rounded-full border border-gray-300"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+              <button
+                type="button"
+                class="bg-white hover:bg-gray-50 text-burgundy border border-burgundy font-quicksand font-medium py-2.5 px-6 rounded-full transition duration-200"
+              >
+                Save Draft
+              </button>
+              <button
+                type="submit"
+                class="bg-burgundy hover:bg-burgundy/90 text-white font-quicksand font-medium py-2.5 px-6 rounded-full transition duration-200"
+              >
+                Continue
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

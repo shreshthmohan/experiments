@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Memory Map - Where It All Began</title>
-    <script src="/tailwindcss.js"></script>
+    <title>Love Map - Where It All Began</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
@@ -16,14 +16,16 @@
       href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
       type="text/css"
     />
-    <!-- quicksand font from a local file -->
-    <link rel="stylesheet" href="/fonts/Quicksand-VariableFont.ttf" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              quicksand: ["Quicksand", "sans-serif"],
+              montserrat: ["Montserrat", "sans-serif"],
             },
           },
         },
@@ -62,43 +64,47 @@
   </head>
 
   <body
-    class="text-gray-700 min-h-screen flex flex-col items-center justify-center font-quicksand pt-20"
+    class="bg-rose-50 text-gray-700 min-h-screen flex flex-col items-center justify-center p-6 font-montserrat"
   >
-    <div class="container mx-auto max-w-7xl pb-20">
-      <div class="flex flex-col md:flex-row gap-6 md:gap-12">
+    <div class="container mx-auto max-w-6xl">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-light text-rose-800 mb-2 tracking-wider">
+          Where It All Began
+        </h1>
+        <p class="text-gray-600 italic">
+          Commemorate the place your hearts first connected
+        </p>
+      </div>
+
+      <div class="flex flex-col md:flex-row gap-6">
         <!-- Map Container (Left on desktop, Top on mobile) -->
-        <div class="w-full md:w-3/5 order-1 max-h-screen bg-gray-100">
-          <div class="w-full mx-auto p-8 lg:px-20 xl:px-32">
+        <div class="w-full md:w-3/5 order-1">
+          <div class="w-full mx-auto p-8">
             <svg
-              id="memory-map-svg"
+              id="love-map-svg"
               class="w-full h-auto shadow-xl shadow-black"
               viewBox="0 0 600 800"
               xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
-                <filter id="shadow" color-interpolation-filters="sRGB">
-                  <feDropShadow
-                    dx="2"
-                    dy="2"
-                    stdDeviation="4"
-                    flood-opacity="1"
-                  />
-                </filter>
-
+                <!-- Define a mask for the circular window -->
                 <mask id="circleMask">
                   <!-- White background (white parts are visible, black parts are invisible) -->
                   <rect x="0" y="0" width="600" height="800" fill="white" />
 
                   <!-- Black circle in the center (creates a transparent circle in the mask) -->
                   <!-- Center the circle on the map area -->
-                  <circle
-                    cx="300"
-                    cy="310"
-                    r="220"
-                    fill="black"
-                    id="map-circle"
-                  />
+                  <circle cx="300" cy="300" r="220" fill="black" />
                 </mask>
+
+                <!-- Inner shadow filter -->
+                <filter id="strong-inner">
+                  <feFlood flood-color="rgba(0,0,0,0.3)" />
+                  <feComposite operator="out" in2="SourceGraphic" />
+                  <feMorphology operator="dilate" radius="8" />
+                  <feGaussianBlur stdDeviation="6" />
+                  <feComposite operator="atop" in2="SourceGraphic" />
+                </filter>
               </defs>
 
               <!-- Map background -->
@@ -120,36 +126,29 @@
                 height="520"
                 preserveAspectRatio="xMidYMid slice"
               />
+
+              <!-- White overlay with circle cutout -->
               <rect
                 x="40"
                 y="40"
                 width="520"
-                height="920"
+                height="520"
                 fill="white"
                 mask="url(#circleMask)"
-                id="map-mask"
-                data-show-circle="true"
               />
-              <rect
-                x="40"
-                y="580"
-                width="520"
-                height="20"
-                fill="white"
-                id="cover-map-image-bottom"
-              />
+
               <!-- Border rectangle with inset shadow -->
-              <rect
+              <!-- <rect
                 id="poster-border"
                 x="20"
                 y="20"
                 width="560"
                 height="760"
-                fill="transparent"
+                fill="none"
                 stroke="#333"
                 stroke-width="2"
-                filter="url(#shadow)"
-              />
+                filter="url(#strong-inner)"
+              /> -->
 
               <!-- Heart marker centered on the map -->
               <svg
@@ -159,7 +158,7 @@
                 height="30.7"
                 id="heart-marker"
                 viewBox="2 3 20 18.350000381469727"
-                opacity="0.85"
+                opacity="1"
               >
                 <g>
                   <path
@@ -174,48 +173,48 @@
                 id="names-text"
                 x="300"
                 y="620"
-                text-anchor="end"
-                font-size="32"
+                text-anchor="middle"
+                font-size="28"
                 font-weight="normal"
-                font-family="'Noto Sans', sans-serif"
+                font-family="'Helvetica Neue', Arial, sans-serif"
+                letter-spacing="2"
                 fill="#111111"
-                class="font-light"
               ></text>
               <text
                 id="moment-text"
                 x="300"
                 y="660"
-                text-anchor="end"
+                text-anchor="middle"
                 font-size="18"
                 font-weight="normal"
                 text-transform="uppercase"
-                font-family="'Noto Sans', sans-serif"
+                font-family="'Helvetica Neue', Arial, sans-serif"
+                letter-spacing="1"
                 fill="#333333"
-                class="font-light"
               ></text>
               <text
                 id="location-text"
                 x="300"
                 y="690"
-                text-anchor="end"
-                font-size="18"
-                font-family="'Noto Sans', sans-serif"
+                text-anchor="middle"
+                font-size="16"
+                font-weight="normal"
+                font-family="'Helvetica Neue', Arial, sans-serif"
                 fill="#555555"
-                class="font-light"
               ></text>
               <text
                 id="date-text"
                 x="300"
                 y="720"
-                text-anchor="end"
-                font-size="18"
-                font-family="'Noto Sans', sans-serif"
+                text-anchor="middle"
+                font-size="16"
+                font-weight="normal"
+                font-family="'Helvetica Neue', Arial, sans-serif"
                 fill="#555555"
-                class="font-light"
               ></text>
             </svg>
             <!-- Download Button -->
-            <div class="mt-6 text-center hidden">
+            <div class="mt-6 text-center">
               <button
                 id="download-map-btn"
                 class="px-6 py-3 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200 flex items-center justify-center mx-auto"
@@ -227,14 +226,16 @@
         </div>
 
         <!-- Input Controls (Right on desktop, Bottom on mobile) -->
-        <div class="w-full md:w-2/5 order-2 px-4 lg:px-8 xl:px-0">
-          <div class="bg-white h-full md:sticky md:top-5">
+        <div class="w-full md:w-2/5 order-2">
+          <div
+            class="bg-white rounded-lg shadow-lg p-6 h-full border border-gray-200 md:sticky md:top-5"
+          >
             <div class="flex flex-col space-y-4">
               <!-- Location Input -->
               <div>
                 <label
-                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
-                  >Map Location</label
+                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
+                  >Location</label
                 >
                 <div class="relative">
                   <input
@@ -275,7 +276,7 @@
               <!-- Names Input -->
               <div>
                 <label
-                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
+                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
                   >Names</label
                 >
                 <input
@@ -289,7 +290,7 @@
               <!-- Moment Text -->
               <div>
                 <label
-                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
+                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
                   >Moment</label
                 >
                 <input
@@ -300,24 +301,10 @@
                 />
               </div>
 
-              <!-- Custom Location Text -->
-              <div>
-                <label
-                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
-                  >Custom Location</label
-                >
-                <input
-                  type="text"
-                  id="custom-location-input"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 font-montserrat tracking-wide"
-                  placeholder="Chandni Chowk"
-                />
-              </div>
-
               <!-- Date Text -->
               <div>
                 <label
-                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
+                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
                   >Date</label
                 >
                 <input
@@ -331,7 +318,7 @@
               <!-- Map Style -->
               <div>
                 <label
-                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
+                  class="block text-gray-700 mb-1 text-xs uppercase font-medium tracking-wider"
                   >Map Style</label
                 >
                 <select
@@ -341,60 +328,11 @@
                   <!-- Will be populated by JavaScript -->
                 </select>
               </div>
-
-              <!-- map shape -->
-              <div>
-                <label
-                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
-                  >Map Shape</label
-                >
-                <select
-                  id="map-shape-select"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 font-montserrat tracking-wide"
-                >
-                  <option value="rectangle">Rectangle</option>
-                  <option value="circle">Circle</option>
-                </select>
-              </div>
-
-              <!-- names font -->
-              <div>
-                <label
-                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
-                  >Names Font</label
-                >
-                <select
-                  id="names-font-select"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 font-montserrat tracking-wide"
-                >
-                  <option value="'Noto Sans', sans-serif">
-                    Classic (Sans)
-                  </option>
-                  <option value="'Wistania', cursive">Cursive</option>
-                </select>
-              </div>
-
-              <!-- Names text font size slider -->
-              <div>
-                <label
-                  class="block text-gray-700 mb-1 text-sm font-medium tracking-wider"
-                  >Names Size</label
-                >
-                <input
-                  type="range"
-                  id="names-font-size-slider"
-                  min="16"
-                  max="128"
-                  value="32"
-                  class="w-full"
-                />
-              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <footer class="w-full my-16 text-center">Anchor Customs</footer>
 
     <!-- Location Selection Modal -->
     <div
@@ -447,24 +385,6 @@
         </div>
       </div>
     </div>
-    <style>
-      @font-face {
-        font-family: "Noto Sans";
-        src: url("/fonts/NotoSans-VariableFont.ttf") format("truetype");
-        font-display: swap;
-      }
-      @font-face {
-        font-family: "Quicksand";
-        src: url("/fonts/Quicksand-VariableFont.ttf") format("truetype");
-        font-display: swap;
-      }
-      /* Wistania */
-      @font-face {
-        font-family: "Wistania";
-        src: url("/fonts/Wistania.ttf") format("truetype");
-        font-display: swap;
-      }
-    </style>
 
     <script>
       // Define custom marker URL
@@ -473,36 +393,39 @@
       // SVG layout parameters - allowing for living adaptation
       const svgParams = {
         viewBox: { width: 600, height: 800 },
-        border: { margin: 0, thickness: 40, color: "#333", radius: 0 },
-        content: { padding: 70, mapHeight: 520 },
-        circle: { radius: 220 },
-        textLayout: { namesY: 640, momentY: 665, locationY: 685, dateY: 705 },
+        border: { margin: 0, thickness: 30, color: "#333", radius: 0 },
+        content: { padding: 80, mapHeight: 520 },
+        textLayout: { namesY: 620, momentY: 660, locationY: 690, dateY: 720 },
       };
 
       // Map styles array - customize as needed
       const mapStyles = [
+        { name: "Streets", value: "mapbox://styles/mapbox/streets-v12" },
+        { name: "Outdoors", value: "mapbox://styles/mapbox/outdoors-v12" },
+        { name: "Light", value: "mapbox://styles/mapbox/light-v11" },
+        { name: "Dark", value: "mapbox://styles/mapbox/dark-v11" },
+        { name: "Satellite", value: "mapbox://styles/mapbox/satellite-v9" },
         {
-          name: "Outdoors",
-          value: "mapbox://styles/shreshthmohan/cma2j7y1p00tf01s5ccjjamf9",
+          name: "Satellite Streets",
+          value: "mapbox://styles/mapbox/satellite-streets-v12",
         },
         {
-          name: "Natural",
-          value: "mapbox://styles/shreshthmohan/cm9ya3dso00kk01s5cr341phz",
-        },
-
-        {
-          name: "Streets",
-          value: "mapbox://styles/shreshthmohan/cm9zgri1900lu01s5fz6z9p95",
+          name: "Navigation Day",
+          value: "mapbox://styles/mapbox/navigation-day-v1",
         },
         {
-          name: "Minimal Light",
-          value: "mapbox://styles/shreshthmohan/cm9zepd0201m301r3aejw2uar",
+          name: "Navigation Night",
+          value: "mapbox://styles/mapbox/navigation-night-v1",
+        },
+        {
+          name: "SM Graysclae",
+          value: "mapbox://styles/shreshthmohan/cm9u1zcqt002i01sidam20rhg",
         },
       ];
 
       // Default to New York City
       const defaultLocation = {
-        name: "NEW YORK CITY",
+        name: "New York City",
         coordinates: [-74.006, 40.7128],
         zoom: 12, // Default zoom level
         bearing: 0, // Default bearing (north)
@@ -516,13 +439,12 @@
       let map;
       let geocoder;
       let mapImage = document.getElementById("map-image");
-      let mapMask = document.getElementById("map-mask");
       let heartMarker = document.getElementById("heart-marker");
       let compassArrow; // Reference to the compass arrow element
 
       // Apply SVG parameters to create an adaptive living structure
-      function applyLayoutParameters(mapShape = "rectangle") {
-        const svg = document.getElementById("memory-map-svg");
+      function applyLayoutParameters() {
+        const svg = document.getElementById("love-map-svg");
         if (!svg) return;
 
         // Set viewBox
@@ -552,8 +474,6 @@
         const contentWidth = borderWidth - 2 * svgParams.content.padding;
         const centerX = svgParams.viewBox.width / 2;
 
-        const contextEndX = contentX + contentWidth;
-
         // Apply to border
         if (borderRect) {
           borderRect.setAttribute("x", svgParams.border.margin);
@@ -571,69 +491,17 @@
         mapImage.setAttribute("height", svgParams.content.mapHeight);
 
         // Text positioning
-        if (mapShape === "rectangle") {
-          textElements.names.setAttribute("x", contextEndX);
-          textElements.names.setAttribute("y", svgParams.textLayout.namesY);
+        textElements.names.setAttribute("x", centerX);
+        textElements.names.setAttribute("y", svgParams.textLayout.namesY);
 
-          textElements.moment.setAttribute("x", contextEndX);
-          textElements.moment.setAttribute("y", svgParams.textLayout.momentY);
+        textElements.moment.setAttribute("x", centerX);
+        textElements.moment.setAttribute("y", svgParams.textLayout.momentY);
 
-          textElements.location.setAttribute("x", contextEndX);
-          textElements.location.setAttribute(
-            "y",
-            svgParams.textLayout.locationY
-          );
+        textElements.location.setAttribute("x", centerX);
+        textElements.location.setAttribute("y", svgParams.textLayout.locationY);
 
-          textElements.date.setAttribute("x", contextEndX);
-          textElements.date.setAttribute("y", svgParams.textLayout.dateY);
-
-          // text-anchor=end for all text elements
-          textElements.names.setAttribute("text-anchor", "end");
-          textElements.moment.setAttribute("text-anchor", "end");
-          textElements.location.setAttribute("text-anchor", "end");
-          textElements.date.setAttribute("text-anchor", "end");
-
-          // hide any elements with data-show-circle="true"
-          document
-            .querySelectorAll("[data-show-circle='true']")
-            .forEach((el) => {
-              el.classList.add("hidden");
-            });
-        } else if (mapShape === "circle") {
-          textElements.names.setAttribute("x", centerX);
-          textElements.names.setAttribute(
-            "y",
-            svgParams.textLayout.namesY - 20
-          );
-
-          textElements.moment.setAttribute("x", centerX);
-          textElements.moment.setAttribute(
-            "y",
-            svgParams.textLayout.momentY - 10
-          );
-
-          textElements.location.setAttribute("x", centerX);
-          textElements.location.setAttribute(
-            "y",
-            svgParams.textLayout.locationY - 10
-          );
-
-          textElements.date.setAttribute("x", centerX);
-          textElements.date.setAttribute("y", svgParams.textLayout.dateY - 10);
-
-          // text-anchor=middle for all text elements
-          textElements.names.setAttribute("text-anchor", "middle");
-          textElements.moment.setAttribute("text-anchor", "middle");
-          textElements.location.setAttribute("text-anchor", "middle");
-          textElements.date.setAttribute("text-anchor", "middle");
-
-          // show any elements with data-show-circle="true", remove hidden class
-          document
-            .querySelectorAll("[data-show-circle='true']")
-            .forEach((el) => {
-              el.classList.remove("hidden");
-            });
-        }
+        textElements.date.setAttribute("x", centerX);
+        textElements.date.setAttribute("y", svgParams.textLayout.dateY);
       }
 
       // Populate map style select
@@ -649,8 +517,7 @@
       function initMap() {
         map = new mapboxgl.Map({
           container: "map-container",
-          // default streets
-          style: "mapbox://styles/mapbox/streets-v12",
+          style: mapStyles[0].value,
           center: selectedLocation.coordinates,
           zoom: selectedLocation.zoom,
           bearing: selectedLocation.bearing, // Initialize with saved bearing
@@ -685,7 +552,7 @@
         compassIndicator.className =
           "absolute bottom-2.5 right-2.5 w-10 h-10 bg-white bg-opacity-80 rounded-full pointer-events-none z-10 flex items-center justify-center shadow";
         compassIndicator.innerHTML = `
-                <div class="absolute text-sm top-0.5 left-1/2 transform -translate-x-1/2 text-rose-700 font-bold">N</div>
+                <div class="absolute text-xs top-0.5 left-1/2 transform -translate-x-1/2 text-rose-700 font-bold">N</div>
                 <div class="compass-arrow"></div>
                 <div class="absolute rounded-full w-2 h-2 bg-gray-400"></div>
             `;
@@ -867,15 +734,13 @@
         const locationText = document.getElementById("location-text");
 
         namesText.textContent =
-          document.getElementById("names-input").value || "EMMA & NOAH";
+          document.getElementById("names-input").value || "Emma & Noah";
         momentText.textContent =
-          document.getElementById("moment-input").value || "ENGAGED";
+          document.getElementById("moment-input").value ||
+          "First met at a coffee shop";
         dateText.textContent =
-          document.getElementById("date-input").value ||
-          "SUNDAY, APRIL 25 2023";
-        locationText.textContent =
-          document.getElementById("custom-location-input").value ||
-          selectedLocation.name;
+          document.getElementById("date-input").value || "April 25, 2023";
+        locationText.textContent = selectedLocation.name;
       }
 
       // Update everything when any input changes
@@ -896,7 +761,7 @@
           await new Promise((resolve) => requestAnimationFrame(resolve));
 
           // Get the SVG element
-          const svgElement = document.getElementById("memory-map-svg");
+          const svgElement = document.getElementById("love-map-svg");
           const svgData = new XMLSerializer().serializeToString(svgElement);
 
           // Create a Blob from the SVG data
@@ -908,13 +773,13 @@
           const downloadLink = document.createElement("a");
 
           // Format filename with location and date if available
-          let locationText = selectedLocation.name.split(",")[0] || "MemoryMap";
+          let locationText = selectedLocation.name.split(",")[0] || "LoveMap";
           locationText = locationText.replace(/[^a-z0-9]/gi, "_").toLowerCase();
 
           let dateText = document.getElementById("date-input").value || "";
           dateText = dateText.replace(/[^a-z0-9]/gi, "_").toLowerCase();
 
-          const filename = `MemoryMap_${locationText}_${dateText}.svg`;
+          const filename = `LoveMap_${locationText}_${dateText}.svg`;
 
           downloadLink.download = filename;
           downloadLink.href = url;
@@ -946,7 +811,8 @@
 
           // Restore button even on error
           const downloadBtn = document.getElementById("download-map-btn");
-          downloadBtn.innerHTML = "Preserve This Memory";
+          downloadBtn.innerHTML =
+            '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>Preserve This Memory';
           downloadBtn.disabled = false;
         }
       }
@@ -1022,52 +888,13 @@
         // Update when inputs change
         document
           .getElementById("names-input")
-          .addEventListener("input", updateSVGText);
+          .addEventListener("input", updateEverything);
         document
           .getElementById("moment-input")
-          .addEventListener("input", updateSVGText);
+          .addEventListener("input", updateEverything);
         document
           .getElementById("date-input")
-          .addEventListener("input", updateSVGText);
-        document
-          .getElementById("custom-location-input")
-          .addEventListener("input", updateSVGText);
-
-        // Map shape
-        document
-          .getElementById("map-shape-select")
-          .addEventListener("change", () => {
-            // get selected value
-            const shape = document.getElementById("map-shape-select").value;
-
-            applyLayoutParameters(shape);
-          });
-
-        // names font
-        document
-          .getElementById("names-font-select")
-          .addEventListener("change", () => {
-            // get selected value
-            const font = document.getElementById("names-font-select").value;
-
-            document
-              .getElementById("names-text")
-              .setAttribute("font-family", font);
-          });
-
-        // names font size
-        document
-          .getElementById("names-font-size-slider")
-          .addEventListener("input", () => {
-            // get selected value
-            const fontSize = document.getElementById(
-              "names-font-size-slider"
-            ).value;
-
-            document
-              .getElementById("names-text")
-              .setAttribute("font-size", fontSize);
-          });
+          .addEventListener("input", updateEverything);
 
         // Initialize with default values
         document.getElementById("location-input").value = selectedLocation.name;

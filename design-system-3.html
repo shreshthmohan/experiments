@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anchor Customs - Design System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              sand: "#b09272",
+              burgundy: "#6d383a",
+              gold: "#c3aa41",
+            },
+            fontFamily: {
+              display: ["Montserrat", "sans-serif"],
+              body: ["Open Sans", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-white min-h-screen">
+    <div class="container mx-auto px-4 py-12 max-w-5xl">
+      <!-- Header -->
+      <header class="mb-12">
+        <div class="flex items-center justify-center md:justify-start">
+          <div
+            class="bg-sand rounded-full p-4 h-16 w-16 flex items-center justify-center"
+          >
+            <span class="text-white text-2xl">⚓</span>
+          </div>
+          <div class="ml-4">
+            <h1 class="text-xl md:text-2xl font-display font-bold text-sand">
+              anchor.customs
+            </h1>
+            <p class="text-sm text-gray-500">Bring your imagination to pages</p>
+          </div>
+        </div>
+      </header>
+
+      <!-- Typography Section -->
+      <section class="mb-16">
+        <div class="mb-8 border-b border-gray-200 pb-4">
+          <h2 class="text-2xl font-display font-semibold text-burgundy">
+            Typography
+          </h2>
+          <p class="text-gray-600">
+            Our typography is designed to be playful yet readable, perfect for
+            creating a warm, gift-giving experience.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-lg font-display font-medium text-sand mb-4">
+              Headings
+            </h3>
+
+            <div class="space-y-6">
+              <div>
+                <h1 class="text-4xl font-display font-bold text-burgundy">
+                  H1 Heading
+                </h1>
+                <p class="text-sm text-gray-500 mt-1">
+                  Montserrat Bold 36px/44px
+                </p>
+              </div>
+
+              <div>
+                <h2 class="text-3xl font-display font-semibold text-burgundy">
+                  H2 Heading
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">
+                  Montserrat SemiBold 30px/38px
+                </p>
+              </div>
+
+              <div>
+                <h3 class="text-2xl font-display font-medium text-burgundy">
+                  H3 Heading
+                </h3>
+                <p class="text-sm text-gray-500 mt-1">
+                  Montserrat Medium 24px/32px
+                </p>
+              </div>
+
+              <div>
+                <h4 class="text-xl font-display font-medium text-burgundy">
+                  H4 Heading
+                </h4>
+                <p class="text-sm text-gray-500 mt-1">
+                  Montserrat Medium 20px/28px
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-display font-medium text-sand mb-4">
+              Body Text
+            </h3>
+
+            <div class="space-y-6">
+              <div>
+                <p class="text-base font-body text-gray-800">
+                  Regular paragraph text (p) is set in Open Sans Regular. This
+                  is our primary text style for content across the website. It
+                  should maintain good readability while maintaining a friendly
+                  tone.
+                </p>
+                <p class="text-sm text-gray-500 mt-1">
+                  Open Sans Regular 16px/24px
+                </p>
+              </div>
+
+              <div>
+                <p class="text-sm font-body text-gray-700">
+                  Small text is used for secondary information, captions, and
+                  form labels. It should still be clearly legible even at this
+                  reduced size.
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  Open Sans Regular 14px/20px
+                </p>
+              </div>
+
+              <div>
+                <p class="text-lg font-body font-semibold text-burgundy">
+                  Featured text might be used to highlight important information
+                  or quotes from happy customers about their gifted magazines.
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  Open Sans SemiBold 18px/28px
+                </p>
+              </div>
+
+              <div>
+                <a
+                  href="#"
+                  class="text-sand hover:text-burgundy font-display font-medium transition duration-200"
+                  >This is a text link style</a
+                >
+                <p class="text-xs text-gray-500 mt-1">
+                  Montserrat Medium with hover state
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12 bg-gray-50 p-6 rounded-lg">
+          <h3 class="text-lg font-display font-medium text-sand mb-4">
+            Color Usage in Typography
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <p class="text-burgundy font-display font-semibold mb-2">
+                Primary Headlines
+              </p>
+              <div class="h-12 bg-burgundy rounded-md"></div>
+              <p class="text-xs text-gray-600 mt-2">
+                #6d383a - Used for main headings and important text
+              </p>
+            </div>
+
+            <div>
+              <p class="text-sand font-display font-semibold mb-2">
+                Secondary Headlines
+              </p>
+              <div class="h-12 bg-sand rounded-md"></div>
+              <p class="text-xs text-gray-600 mt-2">
+                #b09272 - Used for section headings and highlights
+              </p>
+            </div>
+
+            <div>
+              <p class="text-gold font-display font-semibold mb-2">
+                Accent Text
+              </p>
+              <div class="h-12 bg-gold rounded-md"></div>
+              <p class="text-xs text-gray-600 mt-2">
+                #c3aa41 - Used sparingly for special highlights
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12">
+          <h3 class="text-lg font-display font-medium text-sand mb-4">
+            Typography in Context
+          </h3>
+
+          <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <h2 class="text-2xl font-display font-semibold text-burgundy mb-3">
+              Create Your Story
+            </h2>
+            <p class="text-base font-body text-gray-800 mb-6">
+              Turn your cherished memories into beautifully designed magazine
+              spreads that your loved ones will treasure forever.
+            </p>
+
+            <div
+              class="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+            >
+              <button
+                class="bg-burgundy hover:bg-burgundy/90 text-white font-display font-medium py-2 px-6 rounded-full transition duration-200"
+              >
+                Start Your Order
+              </button>
+              <a
+                href="#"
+                class="text-sand hover:text-burgundy font-display font-medium transition duration-200"
+                >View Examples</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
