@@ -1,0 +1,19 @@
+{
+  "name": "fun-numbers",
+  "version": "1.0.0",
+  "description": "Generate fun/nice numbers closest to your input value",
+  "main": "fun-numbers.js",
+  "bin": {
+    "fun-numbers": "./cli.js"
+  },
+  "scripts": {
+    "test": "node test.js",
+    "start": "node cli.js"
+  },
+  "keywords": ["numbers", "fun", "cli", "utility", "palindrome", "patterns"],
+  "author": "Claude Code",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
