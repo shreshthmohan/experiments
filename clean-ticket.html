@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Train Ticket Formatter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  </head>
+  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Upload Section -->
+    <div id="uploadSection" class="container mx-auto px-4 py-8">
+      <div class="max-w-2xl mx-auto text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">
+          Train Ticket Formatter
+        </h1>
+        <p class="text-gray-600 mb-8">
+          Upload your train ticket PDF to create a beautiful, formatted version
+        </p>
+
+        <div
+          class="bg-white rounded-xl shadow-lg p-8 border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors"
+        >
+          <div class="mb-6">
+            <i class="fas fa-cloud-upload-alt text-6xl text-blue-400 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">
+              Upload Your Ticket PDF
+            </h3>
+            <p class="text-gray-500">
+              Drag and drop your PDF file here or click to browse
+            </p>
+          </div>
+
+          <input type="file" id="fileInput" accept=".pdf" class="hidden" />
+          <button
+            onclick="document.getElementById('fileInput').click()"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+          >
+            Choose PDF File
+          </button>
+
+          <div id="uploadStatus" class="mt-4 text-sm"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ticket Display Section -->
+    <div id="ticketSection" class="hidden container mx-auto px-4 py-8">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-6">
+          <button
+            onclick="showUploadSection()"
+            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg mb-4"
+          >
+            <i class="fas fa-arrow-left mr-2"></i>Upload Another Ticket
+          </button>
+        </div>
+
+        <div
+          class="text-gray-800 bg-white rounded-lg border border-gray-800 max-w-lg w-full mx-auto shadow-lg overflow-hidden font-mono"
+        >
+          <!-- Top Row - Times and Dates -->
+          <div class="p-4 border-b border-gray-800">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+              <!-- Departure -->
+              <div class="flex flex-col w-full md:w-auto mb-4 md:mb-0">
+                <div class="flex items-center">
+                  <div
+                    class="bg-gray-700 size-8 grid place-items-center rounded-full text-gray-100 mr-2"
+                  >
+                    <i id="depIcon" class="fa-solid fa-moon text-xl"></i>
+                  </div>
+                  <div id="depTime" class="text-4xl font-bold">22:10</div>
+                </div>
+                <div id="depDate" class="text-2xl font-bold mt-1">
+                  Mon, 07 Jul
+                </div>
+                <div id="depStation" class="text-lg text-gray-600">
+                  DELHI S ROHILLA
+                </div>
+                <div id="depCode" class="text-lg text-gray-500">[DEE]</div>
+              </div>
+
+              <!-- Duration -->
+              <div
+                class="flex flex-col items-center justify-center w-full my-2 md:hidden"
+              >
+                <div id="durationMobile" class="text-nowrap text-gray-700 mx-2">
+                  34h 10m
+                </div>
+                <svg
+                  class="text-gray-400 h-6"
+                  viewBox="17.599998474121094 53.43829345703125 225.94406127929688 56.16168212890625"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                >
+                  <g>
+                    <path
+                      d="m 23.04,109.11988 v -0.48011 l 107.56,0.0401 107.56,0.0401 0.0506,0.44 0.0506,0.44 H 130.65063 23.04 Z"
+                    ></path>
+                  </g>
+                </svg>
+              </div>
+
+              <div class="hidden md:flex flex-col items-center justify-center">
+                <div id="durationDesktop" class="text-nowrap text-gray-700">
+                  34h 10m
+                </div>
+                <svg
+                  class="text-gray-400"
+                  viewBox="17.599998474121094 53.43829345703125 225.94406127929688 56.16168212890625"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                >
+                  <g>
+                    <path
+                      d="m 23.04,109.11988 v -0.48011 l 107.56,0.0401 107.56,0.0401 0.0506,0.44 0.0506,0.44 H 130.65063 23.04 Z"
+                    ></path>
+                  </g>
+                </svg>
+              </div>
+
+              <!-- Arrival -->
+              <div class="flex flex-col items-end w-full md:w-auto">
+                <div class="flex items-center">
+                  <div
+                    class="bg-orange-500 size-8 grid place-items-center rounded-full text-yellow-300 mr-2"
+                  >
+                    <i id="arrIcon" class="fa-solid fa-sun text-xl"></i>
+                  </div>
+                  <div id="arrTime" class="text-4xl font-bold">08:20</div>
+                </div>
+                <div id="arrDate" class="text-2xl font-bold mt-1">
+                  Wed, 09 Jul
+                </div>
+                <div
+                  id="arrStation"
+                  class="text-lg mt-2 text-end text-gray-600"
+                >
+                  YESVANTPUR JN
+                </div>
+                <div id="arrCode" class="text-lg text-gray-500">[YPR]</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Train Details -->
+          <div class="grid grid-cols-2 border-b border-gray-800">
+            <div class="p-4 border-r border-gray-800">
+              <div id="trainNumber" class="text-2xl md:text-3xl font-bold">
+                12214
+              </div>
+              <div id="trainName" class="text-lg md:text-xl text-gray-600">
+                DEE YPR DURONTO
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="flex items-end justify-end">
+                <div class="text-2xl md:text-3xl font-bold">
+                  <span id="coach">A2</span
+                  ><span class="text-gray-400">,</span>
+                  <span id="seat">14</span>
+                </div>
+              </div>
+              <div id="seatType" class="text-lg text-end text-gray-600">
+                UPPER
+              </div>
+            </div>
+          </div>
+
+          <!-- Passenger Details -->
+          <div class="p-4">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0"
+            >
+              <div>
+                <div class="text-sm text-gray-500">Passenger(s)</div>
+                <div id="passengerName" class="text-xl font-bold">
+                  SRESHTHA MOHAN
+                </div>
+              </div>
+              <div>
+                <div class="text-sm text-gray-500">PNR</div>
+                <div id="pnrNumber" class="text-xl md:text-2xl font-bold">
+                  2933711364
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Set up PDF.js worker
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", handleFileUpload);
+
+      function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const statusDiv = document.getElementById("uploadStatus");
+        statusDiv.innerHTML =
+          '<i class="fas fa-spinner fa-spin mr-2"></i>Processing PDF...';
+        statusDiv.className = "mt-4 text-sm text-blue-600";
+
+        const fileReader = new FileReader();
+        fileReader.onload = function (e) {
+          const arrayBuffer = e.target.result;
+          extractTextFromPDF(arrayBuffer);
+        };
+        fileReader.readAsArrayBuffer(file);
+      }
+
+      async function extractTextFromPDF(arrayBuffer) {
+        try {
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          let fullText = "";
+
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items
+              .map((item) => item.str)
+              .join(" ");
+            fullText += pageText + " ";
+          }
+
+          parseTicketData(fullText);
+        } catch (error) {
+          console.error("Error processing PDF:", error);
+          document.getElementById("uploadStatus").innerHTML =
+            '<i class="fas fa-exclamation-triangle mr-2"></i>Error processing PDF. Please try again.';
+          document.getElementById("uploadStatus").className =
+            "mt-4 text-sm text-red-600";
+        }
+      }
+
+      function parseTicketData(text) {
+        try {
+          // Extract train details
+          const trainMatch = text.match(
+            /(\d{5})\s*\/\s*([A-Z\s]+(?:EXP|EXPRESS|DURONTO|RAJDHANI|SHATABDI|MAIL))/i
+          );
+          if (trainMatch) {
+            document.getElementById("trainNumber").textContent = trainMatch[1];
+            document.getElementById("trainName").textContent =
+              trainMatch[2].trim();
+          }
+
+          // Extract PNR
+          const pnrMatch =
+            text.match(/PNR[:\s]*(\d{10})/i) || text.match(/(\d{10})/);
+          if (pnrMatch) {
+            document.getElementById("pnrNumber").textContent = pnrMatch[1];
+          }
+
+          // Extract passenger name
+          const nameMatch = text.match(
+            /(?:Name|Passenger)[:\s]*([A-Z\s]+?)(?:\s+\d+|\s+M|\s+F|\s+Age)/i
+          );
+          if (nameMatch) {
+            document.getElementById("passengerName").textContent =
+              nameMatch[1].trim();
+          }
+
+          // Extract departure station
+          const depStationMatch = text.match(
+            /(?:From|Booked From)[:\s]*([A-Z\s]+?)\s*\([A-Z]{3,4}\)/i
+          );
+          if (depStationMatch) {
+            document.getElementById("depStation").textContent =
+              depStationMatch[1].trim();
+            const depCodeMatch = text.match(
+              new RegExp(
+                depStationMatch[1].replace(/\s+/g, "\\s+") +
+                  "\\s*\\(([A-Z]{3,4})\\)",
+                "i"
+              )
+            );
+            if (depCodeMatch) {
+              document.getElementById(
+                "depCode"
+              ).textContent = `[${depCodeMatch[1]}]`;
+            }
+          }
+
+          // Extract arrival station
+          const arrStationMatch = text.match(
+            /(?:To)[:\s]*([A-Z\s]+?)\s*\([A-Z]{3,4}\)/i
+          );
+          if (arrStationMatch) {
+            document.getElementById("arrStation").textContent =
+              arrStationMatch[1].trim();
+            const arrCodeMatch = text.match(
+              new RegExp(
+                arrStationMatch[1].replace(/\s+/g, "\\s+") +
+                  "\\s*\\(([A-Z]{3,4})\\)",
+                "i"
+              )
+            );
+            if (arrCodeMatch) {
+              document.getElementById(
+                "arrCode"
+              ).textContent = `[${arrCodeMatch[1]}]`;
+            }
+          }
+
+          // Extract departure time and date
+          const depTimeMatch = text.match(/Departure[*\s]*(\d{2}:\d{2})/i);
+          if (depTimeMatch) {
+            document.getElementById("depTime").textContent = depTimeMatch[1];
+            updateTimeIcon("depIcon", depTimeMatch[1]);
+          }
+
+          const depDateMatch = text.match(/(\d{2}-[A-Za-z]{3}-\d{4})/);
+          if (depDateMatch) {
+            document.getElementById("depDate").textContent = formatDate(
+              depDateMatch[1]
+            );
+          }
+
+          // Extract arrival time and date
+          const arrTimeMatch = text.match(/Arrival[*\s]*(\d{2}:\d{2})/i);
+          if (arrTimeMatch) {
+            document.getElementById("arrTime").textContent = arrTimeMatch[1];
+            updateTimeIcon("arrIcon", arrTimeMatch[1]);
+          }
+
+          const arrDateMatch = text.match(
+            /Arrival[*\s]*\d{2}:\d{2}\s*(\d{2}-[A-Za-z]{3}-\d{4})/i
+          );
+          if (arrDateMatch) {
+            document.getElementById("arrDate").textContent = formatDate(
+              arrDateMatch[1]
+            );
+          }
+
+          // Extract seat details
+          const seatMatch = text.match(/([A-Z]\d+)\/(\d+)\/([A-Z]+)/);
+          if (seatMatch) {
+            document.getElementById("coach").textContent = seatMatch[1];
+            document.getElementById("seat").textContent = seatMatch[2];
+            document.getElementById("seatType").textContent = seatMatch[3];
+          }
+
+          // Calculate duration (simplified)
+          calculateDuration();
+
+          // Show ticket
+          showTicketSection();
+
+          document.getElementById("uploadStatus").innerHTML =
+            '<i class="fas fa-check-circle mr-2"></i>PDF processed successfully!';
+          document.getElementById("uploadStatus").className =
+            "mt-4 text-sm text-green-600";
+        } catch (error) {
+          console.error("Error parsing ticket data:", error);
+          // Show ticket anyway with default values
+          showTicketSection();
+          document.getElementById("uploadStatus").innerHTML =
+            '<i class="fas fa-info-circle mr-2"></i>PDF processed, but some details may need manual verification.';
+          document.getElementById("uploadStatus").className =
+            "mt-4 text-sm text-yellow-600";
+        }
+      }
+
+      function updateTimeIcon(iconId, time) {
+        const hour = parseInt(time.split(":")[0]);
+        const iconElement = document.getElementById(iconId);
+
+        if (hour >= 6 && hour < 18) {
+          iconElement.className = "fa-solid fa-sun text-xl";
+          iconElement.parentElement.className =
+            "bg-orange-500 size-8 grid place-items-center rounded-full text-yellow-300 mr-2";
+        } else {
+          iconElement.className = "fa-solid fa-moon text-xl";
+          iconElement.parentElement.className =
+            "bg-gray-700 size-8 grid place-items-center rounded-full text-gray-100 mr-2";
+        }
+      }
+
+      function formatDate(dateStr) {
+        const [day, month, year] = dateStr.split("-");
+        const months = {
+          Jan: "Jan",
+          Feb: "Feb",
+          Mar: "Mar",
+          Apr: "Apr",
+          May: "May",
+          Jun: "Jun",
+          Jul: "Jul",
+          Aug: "Aug",
+          Sep: "Sep",
+          Oct: "Oct",
+          Nov: "Nov",
+          Dec: "Dec",
+        };
+        const date = new Date(
+          year,
+          Object.keys(months).indexOf(month.substring(0, 3)),
+          day
+        );
+        const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        return `${weekdays[date.getDay()]}, ${day} ${months[month]}`;
+      }
+
+      function calculateDuration() {
+        const depTime = document.getElementById("depTime").textContent;
+        const arrTime = document.getElementById("arrTime").textContent;
+
+        // Simple duration calculation (this is approximate)
+        const depHour = parseInt(depTime.split(":")[0]);
+        const depMin = parseInt(depTime.split(":")[1]);
+        const arrHour = parseInt(arrTime.split(":")[0]);
+        const arrMin = parseInt(arrTime.split(":")[1]);
+
+        let totalHours = arrHour - depHour;
+        let totalMins = arrMin - depMin;
+
+        if (totalHours < 0) totalHours += 24;
+        if (totalMins < 0) {
+          totalMins += 60;
+          totalHours -= 1;
+        }
+
+        const duration = `${totalHours}h ${totalMins}m`;
+        document.getElementById("durationMobile").textContent = duration;
+        document.getElementById("durationDesktop").textContent = duration;
+      }
+
+      function showTicketSection() {
+        document.getElementById("uploadSection").classList.add("hidden");
+        document.getElementById("ticketSection").classList.remove("hidden");
+      }
+
+      function showUploadSection() {
+        document.getElementById("ticketSection").classList.add("hidden");
+        document.getElementById("uploadSection").classList.remove("hidden");
+        document.getElementById("fileInput").value = "";
+        document.getElementById("uploadStatus").innerHTML = "";
+      }
+
+      // Drag and drop functionality
+      const uploadSection = document.querySelector("#uploadSection .bg-white");
+
+      uploadSection.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadSection.classList.add("border-blue-400");
+      });
+
+      uploadSection.addEventListener("dragleave", (e) => {
+        e.preventDefault();
+        uploadSection.classList.remove("border-blue-400");
+      });
+
+      uploadSection.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadSection.classList.remove("border-blue-400");
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && files[0].type === "application/pdf") {
+          document.getElementById("fileInput").files = files;
+          handleFileUpload({ target: { files: [files[0]] } });
+        }
+      });
+    </script>
+  </body>
+</html>
