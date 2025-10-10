@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "dev": "concurrently \"pnpm exec tailwindcss -i ./tw/index.css -o ./tw/style.css --watch\" \"pnpm exec tailwindcss -i ./scroll/index.css -o ./scroll/style.css --watch\"",
+    "dev:tw": "pnpm exec tailwindcss -i ./tw/index.css -o ./tw/style.css --watch",
+    "dev:scroll": "pnpm exec tailwindcss -i ./scroll/index.css -o ./scroll/style.css --watch",
+    "build": "pnpm exec tailwindcss -i ./tw/index.css -o ./src/style.css && pnpm exec tailwindcss -i ./scroll/index.css -o ./scroll/style.css"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.14",
+    "install": "^0.13.0",
+    "tailwindcss": "^4.1.14"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

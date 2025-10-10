@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tailwind Starter</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+  </head>
+  <body class="min-h-[300vh]">
+    <!-- Mobile menu button - bottom right, only on mobile -->
+    <button
+      id="menu-toggle"
+      class="fixed bottom-6 right-6 lg:hidden z-50 w-14 h-14 bg-slate-900 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-slate-800 transition-colors"
+      aria-label="Toggle menu"
+    >
+      <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <!-- Mobile menu overlay -->
+    <nav id="mobile-menu" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden hidden">
+      <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-6 max-h-[80vh] overflow-y-auto">
+        <h3 class="text-2xl font-semibold mb-4">Table of Contents</h3>
+        <ul class="space-y-3">
+          <li><a href="#introduction" class="block text-blue-700 hover:underline text-lg py-2">Introduction</a></li>
+          <li><a href="#design" class="block text-blue-700 hover:underline text-lg py-2">Design & Engineering</a></li>
+          <li><a href="#performance" class="block text-blue-700 hover:underline text-lg py-2">Performance</a></li>
+          <li><a href="#chassis" class="block text-blue-700 hover:underline text-lg py-2">Chassis & Handling</a></li>
+          <li>
+            <a href="#interior" class="block text-blue-700 hover:underline text-lg py-2">Interior & Technology</a>
+          </li>
+          <li><a href="#legacy" class="block text-blue-700 hover:underline text-lg py-2">Legacy & Impact</a></li>
+          <li>
+            <a href="#specs" class="block text-blue-700 hover:underline text-lg py-2">Technical Specifications</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="flex flex-col lg:flex-row h-full">
+      <!-- Text content - first (left) on desktop, second on mobile -->
+      <div
+        id="desc"
+        class="w-full lg:w-1/2 bg-gradient-to-br from-amber-50 via-orange-50 to-red-100 h-full p-6 md:p-12 order-2 lg:order-1"
+      >
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8">2013 Ferrari F12 Berlinetta</h1>
+
+        <!-- Desktop table of contents - hidden on mobile -->
+        <nav
+          class="hidden lg:block sticky top-0 mb-8 md:mb-12 p-4 md:p-6 bg-white/80 backdrop-blur-md rounded-lg shadow-lg z-10"
+        >
+          <h3 class="text-xl md:text-2xl font-semibold mb-3 md:mb-4">Table of Contents</h3>
+          <ul class="space-y-2">
+            <li><a href="#introduction" class="text-blue-700 hover:underline">Introduction</a></li>
+            <li><a href="#design" class="text-blue-700 hover:underline">Design & Engineering</a></li>
+            <li><a href="#performance" class="text-blue-700 hover:underline">Performance</a></li>
+            <li><a href="#chassis" class="text-blue-700 hover:underline">Chassis & Handling</a></li>
+            <li><a href="#interior" class="text-blue-700 hover:underline">Interior & Technology</a></li>
+            <li><a href="#legacy" class="text-blue-700 hover:underline">Legacy & Impact</a></li>
+            <li><a href="#specs" class="text-blue-700 hover:underline">Technical Specifications</a></li>
+          </ul>
+        </nav>
+
+        <section id="introduction" class="mb-8 md:mb-12 scroll-mt-32 md:scroll-mt-64 pt-4">
+          <h2 class="text-2xl md:text-3xl font-semibold mb-3 md:mb-4">Introduction</h2>
+          <p class="mb-4">
+            The Ferrari F12 Berlinetta is a front mid-engine, rear-wheel-drive grand tourer produced by Italian
+            automobile manufacturer Ferrari. The F12 Berlinetta debuted at the 2012 Geneva Motor Show, and replaced the
+            599 grand tourer.
+          </p>
+          <p class="mb-4">
+            The naturally aspirated 6.3 liter Ferrari V12 engine used in the F12 Berlinetta has won the 2013
+            International Engine of the Year Award in the Best Performance category and Best Engine above 4.0 litres.
+          </p>
+        </section>
+
+        <section id="design" class="mb-8 md:mb-12 scroll-mt-32 md:scroll-mt-64">
+          <h2 class="text-2xl md:text-3xl font-semibold mb-3 md:mb-4">Design & Engineering</h2>
+          <p class="mb-4">
+            The F12 Berlinetta was designed by the Ferrari Styling Centre and Pininfarina under the direction of
+            Ferrari's Chief Designer Flavio Manzoni. The car's shape features a fastback cabin with a streamlined design
+            that references great Ferraris of the past.
+          </p>
+          <p class="mb-4">
+            Active aerodynamics include an innovative system that generates downforce without increasing drag. The
+            system uses variable geometry to optimize airflow at different speeds. At high speed, the system becomes
+            more efficient while keeping the drag coefficient at just 0.299.
+          </p>
+          <p class="mb-4">
+            The car features Ferrari's HELE system (High Emotion Low Emission) which includes an engine stop-start
+            system. Despite its performance credentials, Ferrari managed to make the F12 one of the most fuel-efficient
+            cars in its class.
+          </p>
+        </section>
+
+        <section id="performance" class="mb-8 md:mb-12 scroll-mt-32 md:scroll-mt-64">
+          <h2 class="text-2xl md:text-3xl font-semibold mb-3 md:mb-4">Performance</h2>
+          <p class="mb-4">
+            The F12 Berlinetta's 6.3L V12 engine produces 740 PS (544 kW; 730 hp) at 8,250 rpm and 690 N⋅m (509 lb⋅ft)
+            of torque at 6,000 rpm. The engine redlines at 8,700 rpm.
+          </p>
+          <p class="mb-4">
+            Performance figures are staggering: 0-100 km/h (62 mph) in 3.1 seconds, 0-200 km/h (124 mph) in 8.5 seconds,
+            and a top speed of over 340 km/h (211 mph). At the time of its release, it was the fastest road-going
+            Ferrari ever built.
+          </p>
+          <p class="mb-4">
+            The seven-speed dual-clutch transmission shifts in just 60 milliseconds, providing seamless power delivery.
+            The F1-Trac traction control system has been calibrated to allow controlled oversteer, making the car
+            engaging to drive while remaining safe.
+          </p>
+        </section>
+
+        <section id="chassis" class="mb-8 md:mb-12 scroll-mt-32 md:scroll-mt-64">
+          <h2 class="text-2xl md:text-3xl font-semibold mb-3 md:mb-4">Chassis & Handling</h2>
+          <p class="mb-4">
+            The F12's chassis uses 12 different kinds of alloys, some of which were developed specifically for this car.
+            The spaceframe architecture provides exceptional rigidity while keeping weight to a minimum at just 1,525 kg
+            (3,362 lb).
+          </p>
+          <p class="mb-4">
+            Magnetic dampers provide adaptive suspension that can respond in milliseconds to changing road conditions.
+            The SCM-E magnetorheological suspension system generates different damping forces at each wheel, optimizing
+            both comfort and performance.
+          </p>
+          <p class="mb-4">
+            Carbon-ceramic brakes measuring 398mm at the front and 360mm at the rear provide exceptional stopping power.
+            The brake calipers are made from aluminum alloy and feature a Brembo design specifically developed for this
+            application.
+          </p>
+        </section>
+
+        <section id="interior" class="mb-8 md:mb-12 scroll-mt-32 md:scroll-mt-64">
+          <h2 class="text-2xl md:text-3xl font-semibold mb-3 md:mb-4">Interior & Technology</h2>
+          <p class="mb-4">
+            The interior blends luxury with racing-inspired functionality. Hand-stitched leather covers most surfaces,
+            while carbon fiber and aluminum accents reinforce the car's performance character. Every control is
+            positioned for optimal ergonomics.
+          </p>
+          <p class="mb-4">
+            The driver-focused cockpit features a traditional Ferrari gated shifter aesthetic reimagined for modern
+            paddle-shift operation. The instrument cluster is fully digital but maintains Ferrari's classic circular
+            gauge design language.
+          </p>
+          <p class="mb-4">
+            Advanced telemetry systems allow drivers to record and analyze their performance on track. The infotainment
+            system includes satellite navigation, premium audio, and smartphone integration, though the focus remains
+            firmly on the driving experience.
+          </p>
+        </section>
+
+        <section id="legacy" class="mb-8 md:mb-12 scroll-mt-32 md:scroll-mt-64">
+          <h2 class="text-2xl md:text-3xl font-semibold mb-3 md:mb-4">Legacy & Impact</h2>
+          <p class="mb-4">
+            The F12 Berlinetta represented a significant leap forward in Ferrari's grand tourer lineage. It demonstrated
+            that a front-engined V12 Ferrari could match or exceed the performance of mid-engined supercars while
+            offering greater practicality and refinement.
+          </p>
+          <p class="mb-4">
+            The car received numerous accolades from automotive journalists, with many considering it the finest
+            front-engined sports car of its generation. Its combination of extreme performance and everyday usability
+            set new standards for the grand touring segment.
+          </p>
+          <p class="mb-4">
+            Limited editions like the F12tdf (tour de France) and the F12 TRS further explored the platform's potential,
+            pushing performance and exclusivity to even greater heights. The F12's successor, the 812 Superfast, built
+            upon this strong foundation.
+          </p>
+        </section>
+
+        <section id="specs" class="mb-8 md:mb-12 scroll-mt-32 md:scroll-mt-64">
+          <h2 class="text-2xl md:text-3xl font-semibold mb-3 md:mb-4">Technical Specifications</h2>
+          <p class="mb-4">
+            <strong>Engine:</strong>
+            6.3L F140 naturally aspirated V12
+          </p>
+          <p class="mb-4">
+            <strong>Power:</strong>
+            740 PS (544 kW; 730 hp) @ 8,250 rpm
+          </p>
+          <p class="mb-4">
+            <strong>Torque:</strong>
+            690 N⋅m (509 lb⋅ft) @ 6,000 rpm
+          </p>
+          <p class="mb-4">
+            <strong>Transmission:</strong>
+            7-speed dual-clutch F1 automated manual
+          </p>
+          <p class="mb-4">
+            <strong>Weight:</strong>
+            1,525 kg (3,362 lb)
+          </p>
+          <p class="mb-4">
+            <strong>Power-to-weight:</strong>
+            2.1 kg/PS
+          </p>
+          <p class="mb-4">
+            <strong>Top Speed:</strong>
+            340+ km/h (211+ mph)
+          </p>
+        </section>
+      </div>
+
+      <!-- Model container - second (right) on desktop, first on mobile -->
+      <div
+        id="model-container"
+        class="w-full lg:h-screen h-[40vh] lg:w-1/2 sticky top-0 bg-gradient-to-bl from-slate-900 via-slate-800 to-slate-900 order-1 lg:order-2"
+      >
+        <model-viewer
+          id="model"
+          class="w-full lg:h-screen h-[40vh]"
+          alt=""
+          src="../assets/2013-ferrari-f12-berlinetta.glb"
+          shadow-intensity="1"
+          camera-orbit="0deg 90deg 10m"
+        ></model-viewer>
+      </div>
+    </div>
+
+    <script>
+      const modelViewer = document.getElementById("model");
+
+      // Check if mobile or desktop
+      const isMobile = () => window.innerWidth < 1024; // lg breakpoint
+
+      window.addEventListener("scroll", () => {
+        const scrollProgress = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+
+        // Rotate camera around the model (0 to 360 degrees)
+        const theta = scrollProgress * 360;
+
+        // Adjust vertical angle (elevation) - oscillate between 60deg and 120deg
+        const phi = 90 + Math.sin(scrollProgress * Math.PI * 2) * 30;
+
+        // Distance from model - different for mobile vs desktop
+        const radius = isMobile() ? 8 : 12;
+
+        // Set camera orbit: theta (horizontal), phi (vertical), radius (distance)
+        modelViewer.cameraOrbit = `${theta}deg ${phi}deg ${radius}m`;
+      });
+
+      // Mobile menu toggle
+      const menuToggle = document.getElementById("menu-toggle");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const menuIcon = document.getElementById("menu-icon");
+      const closeIcon = document.getElementById("close-icon");
+
+      menuToggle.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+        menuIcon.classList.toggle("hidden");
+        closeIcon.classList.toggle("hidden");
+      });
+
+      // Close menu when clicking outside or on a link
+      mobileMenu.addEventListener("click", (e) => {
+        if (e.target === mobileMenu || e.target.tagName === "A") {
+          mobileMenu.classList.add("hidden");
+          menuIcon.classList.remove("hidden");
+          closeIcon.classList.add("hidden");
+        }
+      });
+    </script>
+  </body>
+</html>

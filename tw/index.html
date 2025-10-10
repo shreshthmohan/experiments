@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tailwind Starter</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <label for="green">Green</label>
+    <input type="radio" id="green" name="color" checked />
+    <label for="blue">Blue</label>
+    <input type="radio" id="blue" name="color" />
+    <label for="yellow">Yellow</label>
+    <input type="radio" id="yellow" name="color" />
+    <label for="purple">Purple</label>
+    <input type="radio" id="purple" name="color" />
+    <label for="red">Red</label>
+    <input type="radio" id="red" name="color" />
+    <label for="darksaber">Darksaber</label>
+    <input type="radio" id="darksaber" name="color" />
+
+    <div>
+      <div class="supersaber w-fit mx-auto mt-[5vh]">
+        <input type="checkbox" id="toggle" class="peer absolute w-0 h-0" />
+        <div class="shadow-md shadow-amber-300 peer-checked:visible invisible">
+          <div class="shadow-lg shadow-amber-100">
+            <div class="shadow shadow-amber-400">
+              <div class="beam rounded-t-[100vh] bg-white h-[40vh] w-4 shadow-xl shadow-amber-200 animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+        <label
+          class="cursor-pointer haft w-4 h-12 block bg-zinc-500 rounded-b-lg border-t-2 border-yellow-500"
+          for="toggle"
+        ></label>
+      </div>
+    </div>
+  </body>
+</html>
